@@ -7,6 +7,9 @@ set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 # ==================== common ==================== #
 #==================================================#
 
+include(cmake/architecture.cmake)
+target_architecture(TARGET_ARCHITECTURE)
+message("== [ Compiling LuaSTG Evo dependencies for ${TARGET_ARCHITECTURE} architecture ] ==")
 include(cmake/TargetCommonOptions.cmake)
 
 # ==================== cpm ====================
