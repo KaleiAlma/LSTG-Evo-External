@@ -1,0 +1,18 @@
+[submodule "imgui/imgui"]
+	path = imgui/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "imgui/implot"]
+	path = imgui/implot
+	url = https://github.com/epezent/implot.git
+[submodule "xmath"]
+	path = xmath
+	url = https://github.com/Legacy-LuaSTG-Engine/lstgx_Math.git
+[submodule "lua-cjson"]
+	path = lua-cjson
+	url = https://github.com/openresty/lua-cjson.git
+[submodule "tracy"]
+	path = tracy
+	url = https://github.com/wolfpld/tracy.git
+[submodule "luafilesystem"]
+	path = luafilesystem
+	url = https://github.com/lunarmodules/luafilesystem

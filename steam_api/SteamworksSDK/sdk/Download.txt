@@ -1,0 +1,5 @@
+Valve's terms do not allow the redistribution of SteamAPI, so if you need
+it, please go to Steamworks to download it yourself.
+
+After downloading, you will get a zip file.
+Extract all the files from the sdk folder in the zip file to this folder.
