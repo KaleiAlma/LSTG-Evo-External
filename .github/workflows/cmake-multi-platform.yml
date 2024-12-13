@@ -26,7 +26,7 @@ jobs:
     - if: ${{ runner.os == 'Windows' }}
       run: |
         choco install ninja
-        Install-Module -Name VCVars
+        Install-Module -Name VCVars -Confirm:$false
         (vcvars $(switch ("${{ matrix.target_arch }}") { "x86_64" {"AMD64"}; "arm64" {"ARM64"}; })).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$GITHUB_ENV" }
     - if: ${{ runner.os == 'macOS' }}
