@@ -19,6 +19,7 @@ jobs:
 
     - if: ${{ runner.os == 'Linux' }}
       run: |
+        sudo dpkg --add-architecture arm64
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt install \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
@@ -36,35 +37,30 @@ jobs:
       with:
         submodules: 'recursive'
 
-    - name: Set reusable strings
-      id: strings
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
     - name: Cache C++ packages
       id: cache-cpp
       uses: actions/cache@v4
       with:
-        path: ${{ steps.strings.outputs.build-output-dir }}/cpm-cache
+        path: ${{ github.workspace }}/build/cpm-cache
         key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
         restore-keys: |
           ${{ runner.os }}-cpm-
             
     - name: Configure and Build with CMake
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake -B ${{ github.workspace }}/build
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -S ${{ github.workspace }}
-        -DCPM_SOURCE_CACHE=${{ steps.strings.outputs.build-output-dir }}/cpm-cache
+        -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
         &&
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target ExternalZip
+        cmake --build ${{ github.workspace }}/build --config Release --target ExternalZip
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
       with:
         name: external-${{ runner.os }}-${{ matrix.target_arch }}
         path: |
-          ${{ steps.strings.outputs.build-output-dir }}/out/external
+          ${{ github.workspace }}/build/out/external
         retention-days: 7
