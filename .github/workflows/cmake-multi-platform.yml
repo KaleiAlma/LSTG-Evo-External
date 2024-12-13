@@ -62,7 +62,7 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: external-${{ runner.os }}
+        name: external-${{ runner.os }}-${{ matrix.target_arch }}
         path: |
           ${{ steps.strings.outputs.build-output-dir }}/out/external
         retention-days: 7
