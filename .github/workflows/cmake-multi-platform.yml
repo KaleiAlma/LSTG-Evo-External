@@ -19,14 +19,13 @@ jobs:
 
     - if: ${{ runner.os == 'Linux' }}
       run: |
-        sudo apt update
-        sudo apt install ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev libsdl2-dev
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        sudo apt install ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev clang-tools-18 llvm-18-dev llvm-18-tools libomp-18-dev libc++-18-dev libc++abi-18-dev libclang-common-18-dev libclang-18-dev libclang-cpp18-dev libunwind-18-dev
     - if: ${{ runner.os == 'Windows' }}
       run: |
         choco install ninja
         Install-Module -Name VCVars
-        (vcvars (switch ("${{ matrix.target_arch }}") { "x86_64" {"AMD64"} "arm64" {"ARM64"} })).GetEnumerator()
+        (vcvars (switch ("${{ matrix.target_arch }}") { "x86_64" {"AMD64"}; "arm64" {"ARM64"}; })).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$GITHUB_ENV" }
     - if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@18
