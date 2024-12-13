@@ -11,16 +11,23 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-13, macos-14]
-        build_type: [Release]
+        os: [ubuntu-24.04, windows-latest, macos-14]
+        target_arch: [x86_64, arm64]
 
     steps:
     - run: echo ${{ runner.os }}
 
     - if: ${{ runner.os == 'Linux' }}
-      run: sudo apt update && sudo apt install ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev libsdl2-dev && sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      run: |
+        sudo apt update
+        sudo apt install ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev libsdl2-dev
+        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
     - if: ${{ runner.os == 'Windows' }}
-      run: choco install ninja
+      run: |
+        choco install ninja
+        Install-Module -Name VCVars
+        (vcvars (switch (${{ matrix.target_arch }}) { "x86_64"{"AMD64"} "arm64"{"ARM64"} })).GetEnumerator()
+        | Foreach { "$($_.Key)=$($_.Value)" >> "$GITHUB_ENV" }
     - if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@18
 
@@ -28,66 +35,35 @@ jobs:
       with:
         submodules: 'recursive'
 
+    - name: Set reusable strings
+      id: strings
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
     - name: Cache C++ packages
       id: cache-cpp
       uses: actions/cache@v4
       with:
-        path: ${{ github.workspace }}/build/cpm-cache
-        key: ${{ matrix.os }}-cpm-${{ hashFiles('**/') }}
+        path: ${{ steps.strings.outputs.build-output-dir }}/cpm-cache
+        key: ${{ runner.os }}-cpm-${{ hashFiles('**/') }}
         restore-keys: |
-          ${{ matrix.os }}-cpm-
-
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
-    - name: Configure and Build with CMake (Linux)
+          ${{ runner.os }}-cpm-
+            
+    - name: Configure and Build with CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=clang++-18
-        -DCMAKE_C_COMPILER=clang-18
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch }}.cmake
+        -DCMAKE_BUILD_TYPE=Release
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ steps.strings.outputs.build-output-dir }}/cpm-cache
         -G Ninja
         &&
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target ExternalZip
-      if: ${{ runner.os == 'Linux' }}
-
-    - name: Configure and Build with CMake (Windows)
-      shell: cmd
-      run: >
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" &&
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=cl
-        -DCMAKE_C_COMPILER=cl
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
-        -DCPM_SOURCE_CACHE=${{ steps.strings.outputs.build-output-dir }}/cpm-cache
-        -G Ninja
-        &&
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target ExternalZip
-      if: ${{ runner.os == 'Windows' }}
-
-    - name: Configure and Build with CMake (macOS)
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=$(brew --prefix llvm@18)/bin/clang++
-        -DCMAKE_C_COMPILER=$(brew --prefix llvm@18)/bin/clang
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
-        -DCPM_SOURCE_CACHE=${{ steps.strings.outputs.build-output-dir }}/cpm-cache
-        -G Ninja
-        &&
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target ExternalZip
-      if: ${{ runner.os == 'macOS' }}
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release --target ExternalZip
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: external-${{ matrix.os }}-${{ matrix.build_type }}
+        name: external-${{ runner.os }}
         path: |
           ${{ steps.strings.outputs.build-output-dir }}/out/external
         retention-days: 7
