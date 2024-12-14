@@ -20,10 +20,11 @@ jobs:
     - if: ${{ runner.os == 'Linux' && matrix.target_arch == 'arm64' }}
       run: |
         sudo dpkg --add-architecture arm64
-        sudo cat /etc/apt/sources.list
+        sudo cat /etc/apt/sources.list.d/ubuntu.sources
         # sudo sed -Ei 's/^.+security.ubuntu.com.+$//g' /etc/apt/sources.list
         # sudo sed -i "s/deb h/deb [arch=amd64] h/g" /etc/apt/sources.list
         sudo sed -i "/Components: /a Architecture: amd64" /etc/apt/sources.list.d/ubuntu.sources
+        sudo cat /etc/apt/sources.list.d/ubuntu.sources
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble main restricted"                                | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted"                        | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble universe"                                       | sudo tee -a /etc/apt/sources.list > /dev/null
@@ -66,7 +67,7 @@ jobs:
             
     - name: Configure and Build with CMake
       run: >
-        echo "$env:Path";
+        echo "$env:VSCMD_DIR";
         cmake -B ${{ github.workspace }}/build
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch }}.cmake
         -DCMAKE_BUILD_TYPE=Release
