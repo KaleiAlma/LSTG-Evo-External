@@ -23,7 +23,7 @@ jobs:
         sudo cat /etc/apt/sources.list.d/ubuntu.sources
         # sudo sed -Ei 's/^.+security.ubuntu.com.+$//g' /etc/apt/sources.list
         # sudo sed -i "s/deb h/deb [arch=amd64] h/g" /etc/apt/sources.list
-        sudo sed -i "/Components: /a Architecture: amd64" /etc/apt/sources.list.d/ubuntu.sources
+        sudo sed -i "/Components: /a Architectures: amd64" /etc/apt/sources.list.d/ubuntu.sources
         sudo cat /etc/apt/sources.list.d/ubuntu.sources
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble main restricted"                                | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted"                        | sudo tee -a /etc/apt/sources.list > /dev/null
@@ -48,7 +48,7 @@ jobs:
         choco install ninja
         Install-Module -Name VCVars -Confirm:$false -Force
         (vcvars $(switch ("${{ matrix.target_arch }}") { "x86_64" {"AMD64"}; "arm64" {"ARM64"}; })).GetEnumerator()
-        | Foreach { "$($_.Key)=$($_.Value)" >> "$GITHUB_ENV"; echo "$($_.Key)=$($_.Value)" }
+        | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
     - if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@18
 
