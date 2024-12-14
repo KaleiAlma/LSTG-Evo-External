@@ -1,5 +1,5 @@
 set(archdetect_c_code "
-#if defined(__aarch64__)
+#if defined(__aarch64__) || defined(_M_ARM64) 
     #error cmake_ARCH aarch64
 #elif defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(_M_X64)
     #error cmake_ARCH x86_64
