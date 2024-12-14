@@ -20,6 +20,7 @@ jobs:
     - if: ${{ runner.os == 'Linux' && matrix.target_arch == 'arm64' }}
       run: |
         sudo dpkg --add-architecture arm64
+        sudo sed -Ei 's/^.+security.ubuntu.com.+$//g' /etc/apt/sources.list
         sudo sed -i "s/deb h/deb [arch=amd64] h/g" /etc/apt/sources.list
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble main restricted"                                | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted"                        | sudo tee -a /etc/apt/sources.list > /dev/null
@@ -44,7 +45,7 @@ jobs:
         choco install ninja
         Install-Module -Name VCVars -Confirm:$false -Force
         (vcvars $(switch ("${{ matrix.target_arch }}") { "x86_64" {"AMD64"}; "arm64" {"ARM64"}; })).GetEnumerator()
-        | Foreach { "$($_.Key)=$($_.Value)" >> "$GITHUB_ENV" }
+        | Foreach { "$($_.Key)=$($_.Value)" >> "$GITHUB_ENV"; echo "$($_.Key)=$($_.Value)" }
     - if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@18
 
@@ -63,6 +64,7 @@ jobs:
             
     - name: Configure and Build with CMake
       run: >
+        echo "$PATH";
         cmake -B ${{ github.workspace }}/build
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch }}.cmake
         -DCMAKE_BUILD_TYPE=Release
