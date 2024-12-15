@@ -19,7 +19,6 @@ function(target_architecture output_var)
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/arch.c"
         COMPILE_OUTPUT_VARIABLE ARCH
-        CMAKE_FLAGS CMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
     )
 
     string(REGEX MATCH "cmake_ARCH ([a-zA-Z0-9_]+)" ARCH "${ARCH}")
