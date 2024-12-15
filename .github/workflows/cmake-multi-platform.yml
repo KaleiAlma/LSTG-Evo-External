@@ -38,7 +38,8 @@ jobs:
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt install \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
-          libgcc-14-dev-arm64-cross libstdc++-14-dev-arm64-cross
+          libgcc-14-dev-arm64-cross libstdc++-14-dev-arm64-csross
+        ln -s /usr/bin/ld.lld-18 /usr/bin/ld.lld
     - name: Configure Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
