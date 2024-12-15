@@ -48,7 +48,7 @@ jobs:
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
-      run: brew install ninja llvm@18
+      run: brew install ninja llvm@18 lld
 
     - name: Checkout Repo
       uses: actions/checkout@v4
