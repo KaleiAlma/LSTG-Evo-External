@@ -3,7 +3,7 @@
 CPMAddPackage(
     NAME luajit
     GITHUB_REPOSITORY KaleiAlma/LuaJIT-Evo
-    GIT_TAG 1427339fcdc90afe2f5b7f3dcff0a9551dd5152b
+    GIT_TAG 5919879466c19bac5ffbe0b0640321e67b549b93
 )
 luastg_external_target_common_options(luajit-static)
 
