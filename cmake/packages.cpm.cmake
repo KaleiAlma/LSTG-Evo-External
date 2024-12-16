@@ -8,7 +8,6 @@ CPMAddPackage(
     OPTIONS
     "JSON_BuildTests OFF"
 )
-luastg_external_target_common_options(nlohmann_json)
 
 # gabime spdlog
 # Logging utility
@@ -145,7 +144,6 @@ CPMAddPackage(
 
 if(pcg_cpp_ADDED)
     add_library(pcg_cpp INTERFACE)
-    luastg_external_target_common_options(pcg_cpp)
     target_include_directories(pcg_cpp INTERFACE
         ${pcg_cpp_SOURCE_DIR}/include
     )

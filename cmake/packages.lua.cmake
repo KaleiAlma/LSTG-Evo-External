@@ -119,25 +119,17 @@ CPMAddPackage(
     VERSION 3.4.0
 )
 
-luastg_external_target_common_options(tomlplusplus_tomlplusplus)
-
-
 CPMAddPackage(
     NAME sol2
     GITHUB_REPOSITORY ThePhD/sol2
     VERSION 3.3.0
 )
 
-luastg_external_target_common_options(sol2)
-
 CPMAddPackage(
     NAME magic_enum
     GITHUB_REPOSITORY Neargye/magic_enum
     VERSION 0.9.6
 )
-
-luastg_external_target_common_options(magic_enum)
-
 
 CPMAddPackage(
     NAME toml.lua
