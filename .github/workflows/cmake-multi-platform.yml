@@ -50,6 +50,7 @@ jobs:
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt install \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev
+        sudo rm -f /usr/bin/clang /usr/bin/clang++
         sudo ln -s /usr/bin/clang-18 /usr/bin/clang
         sudo ln -s /usr/bin/clang++-18 /usr/bin/clang++
         sudo ln -s /usr/bin/ld.lld-18 /usr/bin/ld.lld
