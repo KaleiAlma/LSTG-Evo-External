@@ -21,9 +21,6 @@ jobs:
             main-win: AMD64
             rev: haswell
             rev-win: AVX2
-          - main: arm64
-            main-win: ARM64
-            rev-win: armv8.0
         include:
           - os: macos-14
             target_arch:
@@ -33,14 +30,11 @@ jobs:
             target_arch:
               main: arm64
               rev: cortex-a73
-        exclude:
-          - os: macos-14
+          - os: windows-latest
             target_arch:
               main: arm64
-              rev-win: armv8.0
-          - os: ubuntu-24.04
-            target_arch:
-              main: arm64
+              main-win: ARM64
+              rev: armv8.0
               rev-win: armv8.0
 
     steps:
