@@ -84,8 +84,8 @@ jobs:
         cmake -B ${{ github.workspace }}/build
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
         -DCMAKE_BUILD_TYPE=Release
-        -DTARGET_ARCH_REV=${{ matrix.target_arch.rev }}
-        -DTARGET_ARCH_REV_WIN=${{ matrix.target_arch.rev-win }}
+        -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
+        -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev-win }}"
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
