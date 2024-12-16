@@ -44,7 +44,7 @@ jobs:
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-security universe"                              | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-security multiverse"                            | sudo tee -a /etc/apt/sources.list > /dev/null
         sudo apt update
-        sudo apt install libssl-dev:arm64 gcc-14-aarch64-linux-gnu libstdc++-14-dev-arm64-cross binutils-aarch64-linux-gnu
+        sudo apt install libssl-dev:arm64 gcc-10-aarch64-linux-gnu libstdc++-10-dev-arm64-cross binutils-aarch64-linux-gnu
     - name: Configure Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
