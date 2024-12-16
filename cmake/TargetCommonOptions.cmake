@@ -1,5 +1,5 @@
 
-set(LSTG_EXTERNAL_COMPILE_OPTS "-v -march=${TARGET_ARCH_REV} -ffast-math -fno-finite-math-only")
+set(LSTG_EXTERNAL_COMPILE_OPTS "-march=${TARGET_ARCH_REV} -ffast-math -fno-finite-math-only")
 set(LSTG_EXTERNAL_COMPILE_OPTS_WIN "/arch:${TARGET_ARCH_REV_WIN} /fp:fast")
 
 function(luastg_external_target_common_options_no_unicode __TARGET__)
