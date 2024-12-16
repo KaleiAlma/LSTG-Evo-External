@@ -33,6 +33,15 @@ jobs:
             target_arch:
               main: arm64
               rev: cortex-a73
+        exclude:
+          - os: macos-14
+            target_arch:
+              main: arm64
+              rev-win: armv8.0
+          - os: ubuntu-24.04
+            target_arch:
+              main: arm64
+              rev-win: armv8.0
 
     steps:
     - name: Configure Linux (arm)
