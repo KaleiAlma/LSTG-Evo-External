@@ -23,8 +23,16 @@ jobs:
             rev-win: AVX2
           - main: arm64
             main-win: ARM64
-            rev: generic
             rev-win: armv8.0
+        include:
+          - os: macos-14
+            target_arch:
+              main: arm64
+              rev: apple-m1
+          - os: ubuntu-24.04
+            target_arch:
+              main: arm64
+              rev: cortex-a73
 
     steps:
     - name: Configure Linux (arm)
