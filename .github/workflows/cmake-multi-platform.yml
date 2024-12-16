@@ -12,11 +12,23 @@ jobs:
 
       matrix:
         os: [ubuntu-24.04, windows-latest, macos-14]
-        target_arch: [x86_64, arm64]
+        target_arch:
+          - main: x86_64
+            main-win: AMD64
+            rev: westmere
+            rev-win: SSE4.2
+          - main: x86_64
+            main-win: AMD64
+            rev: haswell
+            rev-win: AVX2
+          - main: arm64
+            main-win: ARM64
+            rev: generic
+            rev-win: armv8.0
 
     steps:
     - name: Configure Linux (arm)
-      if: ${{ runner.os == 'Linux' && matrix.target_arch == 'arm64' }}
+      if: ${{ runner.os == 'Linux' && matrix.target_arch.main == 'arm64' }}
       run: |
         sudo dpkg --add-architecture arm64
         sudo sed -i "/Components: /a Architectures: amd64" /etc/apt/sources.list.d/ubuntu.sources
@@ -31,21 +43,22 @@ jobs:
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-security universe"                              | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports noble-security multiverse"                            | sudo tee -a /etc/apt/sources.list > /dev/null
         sudo apt update
-        sudo apt install libssl-dev:arm64
+        sudo apt install libssl-dev:arm64 gcc-14-aarch64-linux-gnu libstdc++-14-dev-arm64-cross
     - name: Configure Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt install \
-          ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
-          libgcc-14-dev-arm64-cross libstdc++-14-dev-arm64-cross
+          ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev
+        sudo ln -s /usr/bin/clang-18 /usr/bin/clang
+        sudo ln -s /usr/bin/clang++-18 /usr/bin/clang++
         sudo ln -s /usr/bin/ld.lld-18 /usr/bin/ld.lld
     - name: Configure Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
         choco install ninja
         Install-Module -Name VCVars -Confirm:$false -Force
-        (vcvars $(switch ("${{ matrix.target_arch }}") { "x86_64" {"AMD64"}; "arm64" {"ARM64"}; })).GetEnumerator()
+        (vcvars ${{ matrix.target_arch.main-win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
@@ -61,25 +74,27 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/build/cpm-cache
-        key: ${{ runner.os }}-${{ matrix.target_arch }}-cpm-${{ hashFiles('**/') }}
+        key: ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-cpm-${{ hashFiles('**/') }}
         restore-keys: |
-          ${{ runner.os }}-${{ matrix.target_arch }}-cpm-
+          ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-cpm-
             
     - name: Configure and Build with CMake
       run: >
         cmake -B ${{ github.workspace }}/build
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch }}.cmake
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
         -DCMAKE_BUILD_TYPE=Release
+        -DTARGET_ARCH_REV=${{ matrix.target_arch.rev }}
+        -DTARGET_ARCH_REV_WIN=${{ matrix.target_arch.rev-win }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
         &&
-        cmake --build ${{ github.workspace }}/build --config Release --target ExternalZip -v
+        cmake --build ${{ github.workspace }}/build --config Release --target ExternalZip
 
     - name: Archive artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: external-${{ runner.os }}-${{ matrix.target_arch }}
+        name: external-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}
         path: |
           ${{ github.workspace }}/build/out/external
         retention-days: 7

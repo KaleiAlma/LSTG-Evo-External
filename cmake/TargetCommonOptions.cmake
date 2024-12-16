@@ -1,4 +1,7 @@
 
+set(LSTG_EXTERNAL_COMPILE_OPTS "-march=${TARGET_ARCH_REV} -ffast-math -fno-finite-math-only")
+set(LSTG_EXTERNAL_COMPILE_OPTS_WIN "/arch:${TARGET_ARCH_REV_WIN} /fp:fast")
+
 function(luastg_external_target_common_options_no_unicode __TARGET__)
     if(MSVC)
         target_compile_options(${__TARGET__} INTERFACE
@@ -8,15 +11,15 @@ function(luastg_external_target_common_options_no_unicode __TARGET__)
         target_link_options(${__TARGET__} INTERFACE
             "/DEPENDENTLOADFLAG:0x800" # Windows 10 1607+ 强制 DLL 搜索目录为系统目录
         )
-        if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND TARGET_ARCHITECTURE EQUAL "x86_64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
             target_compile_options(${__TARGET__} INTERFACE
-                "/arch:AVX"
+                ${LSTG_EXTERNAL_COMPILE_OPTS}
             )
         endif()
     else()
-        if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND TARGET_ARCHITECTURE EQUAL "x86_64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
             target_compile_options(${__TARGET__} INTERFACE
-                "-mavx"
+                ${LSTG_EXTERNAL_COMPILE_OPTS}
             )
         endif()
     endif()
