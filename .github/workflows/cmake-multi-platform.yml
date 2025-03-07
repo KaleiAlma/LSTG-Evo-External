@@ -12,20 +12,19 @@ jobs:
 
       matrix:
         os: [ubuntu-20.04, windows-latest, macos-14]
-        shared: [ON, OFF]
         target_arch:
           - main: x86_64
-            main-win: AMD64
+            main_win: AMD64
             rev: westmere
-            rev-win: SSE4.2
+            rev_win: SSE4.2
           - main: x86_64
-            main-win: AMD64
+            main_win: AMD64
             rev: haswell
-            rev-win: AVX2
+            rev_win: AVX2
           - main: arm64
-            main-win: ARM64
+            main_win: ARM64
             rev: armv8.2-a
-            rev-win: armv8.2
+            rev_win: armv8.2
 
     steps:
     - name: Configure Linux (arm)
@@ -61,7 +60,7 @@ jobs:
       run: |
         choco install ninja
         Install-Module -Name VCVars -Confirm:$false -Force
-        (vcvars ${{ matrix.target_arch.main-win }}).GetEnumerator()
+        (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
@@ -87,17 +86,44 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
-        -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev-win }}"
+        -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
+        -DBUILD_SHARED_LIBS=ON
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
         &&
-        cmake --build ${{ github.workspace }}/build --config Release --target ExternalZip
+        cmake --build ${{ github.workspace }}/build --config Release --target external-build
+        &&
+        cmake --install ${{ github.workspace }}/build
+        &&
+        cmake -E rename ${{ github.workspace }}/build/lstgext ${{ github.workspace }}/build/lstgext-shared
+        &&
+        cmake -B ${{ github.workspace }}/build
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
+        -DCMAKE_BUILD_TYPE=Release
+        -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
+        -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
+        -DBUILD_SHARED_LIBS=OFF
+        -S ${{ github.workspace }}
+        -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
+        -G Ninja
+        &&
+        cmake --build ${{ github.workspace }}/build --config Release --target external-build
+        &&
+        cmake --install ${{ github.workspace }}/build
+        &&
+        cmake -E rename ${{ github.workspace }}/build/lstgext ${{ github.workspace }}/build/lstgext-static
 
-    - name: Archive artifacts
+    - name: Archive Shared
       uses: actions/upload-artifact@v4
       with:
-        name: external-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}
-        path: |
-          ${{ github.workspace }}/build/out/external
+        name: lstgext-shared-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}
+        path: ${{ github.workspace }}/build/lstgext-shared
+        retention-days: 7
+
+    - name: Archive Static
+      uses: actions/upload-artifact@v4
+      with:
+        name: lstgext-static-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}
+        path: ${{ github.workspace }}/build/lstgext-static
         retention-days: 7

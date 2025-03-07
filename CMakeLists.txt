@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.27)
 project(LuaSTGEvo-External)
 
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-option(BUILD_SHARED_LIBS ON)
 
 #==================================================#
 # ==================== common ==================== #
