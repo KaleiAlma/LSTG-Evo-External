@@ -12,8 +12,8 @@ CPMAddPackage(
         "WITH_GTEST OFF"
         "MZ_FETCH_LIBS ON"
         "ZLIB_REPOSITORY https://github.com/zlib-ng/zlib-ng"
-        "ZLIB_TAG 2.1.6"
-        "ZSTD_TAG v1.5.6"
+        "ZLIB_TAG 2.2.4"
+        "ZSTD_TAG v1.5.7"
 )
 
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
