@@ -46,7 +46,7 @@ jobs:
         sudo apt update
         sudo apt install libssl-dev:arm64 gcc-10-aarch64-linux-gnu libstdc++-10-dev-arm64-cross binutils-aarch64-linux-gnu \
           libx11-dev:arm64 libpipewire-0.2-dev:arm64 libwayland-dev:arm64 libaudio-dev:arm64 libjack-dev:arm64 libsndio-dev:arm64 \
-          libasound2-dev:arm64 libpulse-dev:arm64 libxkbcommon-dev:arm64
+          libasound2-dev:arm64 libpulse-dev:arm64 libpulse-mainloop-glib0:arm64 libglib2.0-dev:arm64 libxkbcommon-dev:arm64
     - name: Configure Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
