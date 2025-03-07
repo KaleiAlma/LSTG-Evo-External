@@ -1,5 +1,3 @@
-set(ZSTD_TAG v1.5.6 CACHE STRING "")
-
 # minizip
 # Load zip files
 
@@ -12,8 +10,10 @@ CPMAddPackage(
         "ZLIB_ENABLE_TESTS OFF"
         "ZLIBNG_ENABLE_TESTS OFF"
         "WITH_GTEST OFF"
+        "MZ_FETCH_LIBS ON"
         "ZLIB_REPOSITORY https://github.com/zlib-ng/zlib-ng"
         "ZLIB_TAG 2.1.6"
+        "ZSTD_TAG v1.5.6"
 )
 
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
