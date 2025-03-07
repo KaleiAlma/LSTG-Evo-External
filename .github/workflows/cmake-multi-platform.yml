@@ -97,7 +97,7 @@ jobs:
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
         &&
-        cmake --build ${{ github.workspace }}/build --config Release --target external-build -v
+        cmake --build ${{ github.workspace }}/build --config Release --target external-build
         &&
         cmake --install ${{ github.workspace }}/build
         &&

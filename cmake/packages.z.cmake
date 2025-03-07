@@ -16,4 +16,8 @@ CPMAddPackage(
         "ZSTD_TAG v1.5.7"
 )
 
+if(LINUX AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # lld is broken when cross-compiling
+    set_target_properties(minizip PROPERTIES LINKER_TYPE BFD)
+endif()
+
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
