@@ -44,15 +44,15 @@ jobs:
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-security universe"                              | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-security multiverse"                            | sudo tee -a /etc/apt/sources.list > /dev/null
         sudo apt update
-        sudo apt install libssl-dev:arm64 gcc-10-aarch64-linux-gnu libstdc++-10-dev-arm64-cross binutils-aarch64-linux-gnu \
-          libx11-dev:arm64 libpipewire-0.2-dev:arm64 libwayland-dev:arm64 libaudio-dev:arm64 libjack-dev:arm64 libsndio-dev:arm64 \
-          libasound2-dev:arm64 libpulse-dev:arm64 libpulse-mainloop-glib0:arm64 libglib2.0-dev:arm64 libxkbcommon-dev:arm64
+        sudo apt install libssl-dev:arm64 gcc-10-aarch64-linux-gnu libstdc++-10-dev-arm64-cross binutils-aarch64-linux-gnu
     - name: Configure Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt install \
-          ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev
+          ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
+          libx11-dev libpipewire-0.2-dev libwayland-dev libaudio-dev libjack-dev libsndio-dev \
+          libasound2-dev libpulse-dev libpulse-mainloop-glib0 libglib2.0-dev libxkbcommon-dev
         sudo rm -f /usr/bin/clang /usr/bin/clang++
         sudo ln -s /usr/bin/clang-18 /usr/bin/clang
         sudo ln -s /usr/bin/clang++-18 /usr/bin/clang++
