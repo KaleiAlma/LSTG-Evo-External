@@ -92,6 +92,7 @@ jobs:
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
         -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
         -DBUILD_SHARED_LIBS=ON
+        -DLSTG_EXTERNAL_INSTALL_SUBDIR=shared/lstgext
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
@@ -100,16 +101,17 @@ jobs:
         &&
         cmake --install ${{ github.workspace }}/build
         &&
-        cmake -E rename ${{ github.workspace }}/build/lstgext ${{ github.workspace }}/build/lstgext-shared
-        &&
-        cmake -E rm ${{ github.workspace }}/build/CMakeCache.txt
-        &&
         cmake -B ${{ github.workspace }}/build
+        -UBUILD_SHARED_LIBS
+        -USDL_SHARED
+        -USDL_STATIC
+        -UTRACY_STATIC
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
         -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
         -DBUILD_SHARED_LIBS=OFF
+        -DLSTG_EXTERNAL_INSTALL_SUBDIR=static/lstgext
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
@@ -117,19 +119,17 @@ jobs:
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
         &&
         cmake --install ${{ github.workspace }}/build
-        &&
-        cmake -E rename ${{ github.workspace }}/build/lstgext ${{ github.workspace }}/build/lstgext-static
 
     - name: Archive Shared
       uses: actions/upload-artifact@v4
       with:
         name: lstgext-shared-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}
-        path: ${{ github.workspace }}/build/lstgext-shared
+        path: ${{ github.workspace }}/build/shared/lstgext
         retention-days: 7
 
     - name: Archive Static
       uses: actions/upload-artifact@v4
       with:
         name: lstgext-static-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}
-        path: ${{ github.workspace }}/build/lstgext-static
+        path: ${{ github.workspace }}/build/static/lstgext
         retention-days: 7
