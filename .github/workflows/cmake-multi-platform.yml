@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-22.04, windows-latest, macos-14]
+        os: [ubuntu-20.04, windows-latest, macos-14]
         target_arch:
           - main: x86_64
             main_win: AMD64
@@ -45,7 +45,7 @@ jobs:
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-security multiverse"                            | sudo tee -a /etc/apt/sources.list > /dev/null
         sudo apt update
         sudo apt install libssl-dev:arm64 gcc-10-aarch64-linux-gnu libstdc++-10-dev-arm64-cross binutils-aarch64-linux-gnu \
-          libx11-dev:arm64 libpipewire-0.3-dev:arm64 libwayland-dev:arm64 libaudio-dev:arm64 libjack-dev:arm64 libsndio-dev:arm64 \
+          libx11-dev:arm64 libpipewire-0.2-dev:arm64 libwayland-dev:arm64 libaudio-dev:arm64 libjack-dev:arm64 libsndio-dev:arm64 \
           libasound2-dev:arm64 libpulse-dev:arm64 libxkbcommon-dev:arm64
     - name: Configure Linux
       if: ${{ runner.os == 'Linux' }}

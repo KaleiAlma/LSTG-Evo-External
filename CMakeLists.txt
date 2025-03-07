@@ -311,6 +311,7 @@ set(LSTG_EXTERNAL_INCDIRS_FULL ${LSTG_EXTERNAL_INCDIRS}
     ${LSTG_IMGUI_BASEDIRS}
     ${LSTG_PCG_BASEDIRS}
     ${LSTG_STB_BASEDIRS}
+    ${luajit_BINARY_DIR}/luajit/include/luajit-2.1
 )
 target_include_directories(lstgext PUBLIC
     ${LSTG_EXTERNAL_INCDIRS_FULL}
