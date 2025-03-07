@@ -148,7 +148,8 @@ jobs:
 
       - name: Rezip artifacts
         run: |
-          for a in ${{ github.workspace }}/lstgext/*/
+          cd ${{ github.workspace }}/lstgext/
+          for a in */
             do zip -r "${a%/}.zip" "$a" &
           done
           wait
