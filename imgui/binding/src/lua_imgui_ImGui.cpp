@@ -146,13 +146,13 @@ static int lib_ShowStackToolWindow(lua_State* L)
     if(lua_gettop(L) >= 1)
     {
         bool p_open = lua_toboolean(L, 1);
-        ImGui::ShowStackToolWindow(&p_open);
+        ImGui::ShowIDStackToolWindow(&p_open);
         lua_pushboolean(L, p_open);
         return 1;
     }
     else
     {
-        ImGui::ShowStackToolWindow();
+        ImGui::ShowIDStackToolWindow();
         return 0;
     }
 }
@@ -695,28 +695,10 @@ static int lib_SetWindowFontScale(lua_State* L)
 
 //////// Content region
 
-static int lib_GetContentRegionMax(lua_State* L)
-{
-    ImVec2* vec2 = imgui_binding_lua_new_ImVec2(L);
-    *vec2 = ImGui::GetContentRegionMax();
-    return 1;
-}
 static int lib_GetContentRegionAvail(lua_State* L)
 {
     ImVec2* vec2 = imgui_binding_lua_new_ImVec2(L);
     *vec2 = ImGui::GetContentRegionAvail();
-    return 1;
-}
-static int lib_GetWindowContentRegionMin(lua_State* L)
-{
-    ImVec2* vec2 = imgui_binding_lua_new_ImVec2(L);
-    *vec2 = ImGui::GetWindowContentRegionMin();
-    return 1;
-}
-static int lib_GetWindowContentRegionMax(lua_State* L)
-{
-    ImVec2* vec2 = imgui_binding_lua_new_ImVec2(L);
-    *vec2 = ImGui::GetWindowContentRegionMax();
     return 1;
 }
 
@@ -891,28 +873,17 @@ static int lib_PopStyleVar(lua_State* L)
     }
     return 0;
 }
-static int lib_PushTabStop(lua_State* L)
+static int lib_PushItemFlag(lua_State* L)
 {
-    const bool tab_stop = lua_toboolean(L, 1);
-    ImGui::PushTabStop(tab_stop);
+    const ImGuiItemFlags flag = luaL_checkinteger(L, 1);
+    const bool enabled = lua_toboolean(L, 1);
+    ImGui::PushItemFlag(flag, enabled);
     return 0;
 }
-static int lib_PopTabStop(lua_State* L)
+static int lib_PopItemFlag(lua_State* L)
 {
     std::ignore = L;
-    ImGui::PopTabStop();
-    return 0;
-}
-static int lib_PushButtonRepeat(lua_State* L)
-{
-    const bool repeat = lua_toboolean(L, 1);
-    ImGui::PushButtonRepeat(repeat);
-    return 0;
-}
-static int lib_PopButtonRepeat(lua_State* L)
-{
-    std::ignore = L;
-    ImGui::PopButtonRepeat();
+    ImGui::PopItemFlag();
     return 0;
 }
 
@@ -1522,7 +1493,7 @@ static int lib_Combo(lua_State* L)
             // so it's easy to handle lua getter callback function (same lua_State)
             struct Wrapper
             {
-                static bool Getter(void* data, int idx, const char** out_text)
+                static const char* Getter(void* data, int idx)
                 {
                     lua_State* L = (lua_State*)data;
                     lua_pushvalue(L, 3);
@@ -1531,14 +1502,14 @@ static int lib_Combo(lua_State* L)
                     lua_call(L, 1, 1);
                     if (lua_type(L, -1) == LUA_TSTRING)
                     {
-                        *out_text = luaL_checkstring(L, -1);
+                        const char* ret = luaL_checkstring(L, -1);
                         lua_pop(L, 1);
-                        return true;
+                        return ret;
                     }
                     else
                     {
                         lua_pop(L, 1);
-                        return false;
+                        return nullptr;
                     }
                 };
             };
@@ -1856,7 +1827,7 @@ static int lib_ListBox(lua_State* L)
         const int items_count = (int)luaL_checkinteger(L, 4);
         struct Wrapper
         {
-            static bool Getter(void* data, int idx, const char** out_text)
+            static const char* Getter(void* data, int idx)
             {
                 lua_State* L = (lua_State*)data;
                 lua_pushvalue(L, 3);
@@ -1864,15 +1835,14 @@ static int lib_ListBox(lua_State* L)
                 lua_call(L, 1, 1);
                 if (lua_isstring(L, -1))
                 {
-                    *out_text = lua_tostring(L, -1);
+                    const char* ret = lua_tostring(L, -1);
                     lua_pop(L, 1);
-                    return true;
+                    return ret;
                 }
                 else
                 {
                     lua_pop(L, 1);
-                    *out_text = nullptr;
-                    return false;
+                    return nullptr;
                 }
             }
         };
@@ -2947,21 +2917,6 @@ static /* !!!! */ int lib_SetStateStorage(lua_State* L)
 static /* !!!! */ int lib_GetStateStorage(lua_State* L)
 {
     LUA_IMGUI_NOT_SUPPORT;
-}
-static int lib_BeginChildFrame(lua_State* L)
-{
-    const ImGuiID id = (ImGuiID)luaL_checkinteger(L, 1);
-    ImVec2* size = imgui_binding_lua_to_ImVec2(L, 2);
-    const ImGuiWindowFlags flag = (ImGuiWindowFlags)luaL_optinteger(L, 3, 0);
-    const bool ret = ImGui::BeginChildFrame(id, *size, flag);
-    lua_pushboolean(L, ret);
-    return 1;
-}
-static int lib_EndChildFrame(lua_State* L)
-{
-    std::ignore = L;
-    ImGui::EndChildFrame();
-    return 0;
 }
 
 //////// Text Utilities

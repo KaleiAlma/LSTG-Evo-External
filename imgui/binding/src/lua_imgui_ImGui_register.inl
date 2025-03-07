@@ -68,9 +68,6 @@ static const luaL_Reg lib_fun[] = {
     
     // Content region
     MAKEF(GetContentRegionAvail),
-    MAKEF(GetContentRegionMax),
-    MAKEF(GetWindowContentRegionMin),
-    MAKEF(GetWindowContentRegionMax),
     
     // Windows Scrolling
     MAKEF(GetScrollX),
@@ -91,10 +88,8 @@ static const luaL_Reg lib_fun[] = {
     MAKEF(PopStyleColor),
     MAKEF(PushStyleVar),
     MAKEF(PopStyleVar),
-    MAKEF(PushTabStop),
-    MAKEF(PopTabStop),
-    MAKEF(PushButtonRepeat),
-    MAKEF(PopButtonRepeat),
+    MAKEF(PushItemFlag),
+    MAKEF(PopItemFlag),
     
     // Parameters stacks (current window)
     MAKEF(PushItemWidth),
@@ -397,8 +392,6 @@ static const luaL_Reg lib_fun[] = {
     MAKEF(GetStyleColorName),
     MAKEF(SetStateStorage),
     MAKEF(GetStateStorage),
-    MAKEF(BeginChildFrame),
-    MAKEF(EndChildFrame),
     
     // Text Utilities
     MAKEF(CalcTextSize),

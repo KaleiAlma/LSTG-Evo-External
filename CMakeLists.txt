@@ -118,18 +118,22 @@ include(cmake/packages.gfx.cmake)
 # ==================== imgui ==================== #
 #=================================================#
 
+list(APPEND LSTG_EXTERNAL_DEFINES
+    IMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/imgui/lstg_imconfig.h"
+)
 
 list(APPEND LSTG_IMGUI_BASEDIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui
 )
 
 list(APPEND LSTG_EXTERNAL_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_rect_pack.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imstb_textedit.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imstb_truetype.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imconfig.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui_demo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui_draw.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui_draw.cpp # imgui_rect_pack.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui_tables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui_widgets.cpp
@@ -138,7 +142,7 @@ list(APPEND LSTG_EXTERNAL_SOURCES
 
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/misc/cpp/imgui_stdlib.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/misc/cpp/imgui_stdlib.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_freetype.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/misc/freetype/imgui_freetype.cpp # imgui_rect_pack.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/misc/freetype/imgui_freetype.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdl3.cpp
@@ -147,7 +151,6 @@ list(APPEND LSTG_EXTERNAL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdlgpu3.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdlgpu3_shaders.h
 )
-
 
 list(APPEND LSTG_IMGUI_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui.h

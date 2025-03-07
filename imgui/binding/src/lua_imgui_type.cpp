@@ -1,3 +1,4 @@
+#include "imgui.h"
 #include "lua_imgui_common.hpp"
 #include "lua_imgui_type.hpp"
 #include "lua_imgui_hash.hpp"
