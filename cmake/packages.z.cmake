@@ -16,6 +16,4 @@ CPMAddPackage(
         "ZSTD_TAG v1.5.7"
 )
 
-message("== DEBUG: ${MINIZIP_LBD} ==")
-
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
