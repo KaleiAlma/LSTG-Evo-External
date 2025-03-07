@@ -584,7 +584,7 @@ void imgui_binding_lua_register_ImGuiStyle(lua_State* L)
                 data->WindowTitleAlign = *imgui_binding_lua_to_ImVec2(L, 3);
                 break;
             case E::WindowMenuButtonPosition:
-                data->WindowMenuButtonPosition = (int)luaL_checkinteger(L, 3);
+                data->WindowMenuButtonPosition = (ImGuiDir)luaL_checkinteger(L, 3);
                 break;
             case E::ChildRounding:
                 data->ChildRounding = (float)luaL_checknumber(L, 3);
@@ -647,7 +647,7 @@ void imgui_binding_lua_register_ImGuiStyle(lua_State* L)
                 data->TabMinWidthForCloseButton = (float)luaL_checknumber(L, 3);
                 break;
             case E::ColorButtonPosition:
-                data->ColorButtonPosition = (int)luaL_checkinteger(L, 3);
+                data->ColorButtonPosition = (ImGuiDir)luaL_checkinteger(L, 3);
                 break;
             case E::ButtonTextAlign:
                 data->ButtonTextAlign = *imgui_binding_lua_to_ImVec2(L, 3);

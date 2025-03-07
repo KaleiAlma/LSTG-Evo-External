@@ -1,12 +1,57 @@
-# sdl2
+# # sdl2
+
+# CPMAddPackage(
+#     NAME SDL2
+#     GITHUB_REPOSITORY libsdl-org/SDL
+#     GIT_TAG release-2.32.0
+#     OPTIONS
+#         "SDL2_DISABLE_INSTALL OFF"
+#         "SDL2_DISABLE_UNINSTALL ON"
+#         "SDL_TEST OFF"
+#         "SDL_SHARED ${BUILD_SHARED_LIBS}"
+# )
+
+# if(BUILD_SHARED_LIBS)
+#     lstgext_tgtopts_full(SDL2)
+# else()
+#     lstgext_tgtopts_full(SDL2-static)
+# endif()
+# lstgext_tgtopts_full(SDL2main)
+
+# sdl3
 
 CPMAddPackage(
-    NAME SDL2
+    NAME SDL3
     GITHUB_REPOSITORY libsdl-org/SDL
-    GIT_TAG release-2.30.10
+    GIT_TAG release-3.2.8
+    OPTIONS
+        "SDL_INSTALL ON"
+        "SDL_INSTALL_CPACK OFF"
+        "SDL_INSTALL_DOCS OFF"
+        "SDL_INSTALL_TESTS OFF"
+        "SDL_UNINSTALL OFF"
+        "SDL_TEST OFF"
+        "SDL_TEST_LIBRARY OFF"
+        # "SDL_SHARED ${BUILD_SHARED_LIBS}"
+        "SDL_ASSEMBLY ON"
+        "SDL_MMX ${LSTG_x86_64}"
+        "SDL_SSE ${LSTG_x86_64}"
+        "SDL_SSE2 ${LSTG_x86_64}"
+        "SDL_SSE3 ${LSTG_SSE4_2}"
+        "SDL_SSE4_1 ${LSTG_SSE4_2}"
+        "SDL_SSE4_2 ${LSTG_SSE4_2}"
+        "SDL_AVX ${LSTG_AVX}"
+        "SDL_AVX2 ${LSTG_AVX2}"
+        "SDL_AVX512F ${LSTG_AVX512F}"
 )
-luastg_external_target_common_options(SDL2)
-luastg_external_target_common_options(SDL2main)
+
+if(BUILD_SHARED_LIBS)
+    lstgext_tgtopts_base(SDL3-shared)
+    lstgext_tgtopts_unicode(SDL3-shared)
+else()
+    lstgext_tgtopts_base(SDL3-static)
+    lstgext_tgtopts_unicode(SDL3-static)
+endif()
 
 # g-truc glm
 # OpenGL math library
@@ -16,9 +61,17 @@ CPMAddPackage(
     GITHUB_REPOSITORY g-truc/glm
     GIT_TAG 1.0.1
     OPTIONS
-    "GLM_ENABLE_CXX_17 ON"
+        "GLM_ENABLE_CXX_20 ON"
+        "GLM_ENABLE_SIMD_SSE2 ${LSTG_x86_64}"
+        "GLM_ENABLE_SIMD_SSE4_2 ${LSTG_SSE4_2}"
+        "GLM_ENABLE_SIMD_AVX ${LSTG_AVX}"
+        "GLM_ENABLE_SIMD_AVX2 ${LSTG_AVX2}"
+        "GLM_BUILD_LIBRARY ON"
+        "GLM_BUILD_INSTALL ON"
 )
-luastg_external_target_common_options(glm)
+lstgext_tgtopts_full(glm)
+
+list(APPEND LSTG_EXTERNAL_ALL_INCDIRS ${glm_SOURCE_DIR}/glm)
 
 # tinygltf
 # Parser for gltf 2.0 files
@@ -27,95 +80,45 @@ CPMAddPackage(
     NAME tinygltf
     VERSION 2.8.14
     GITHUB_REPOSITORY syoyo/tinygltf
-    #OPTIONS
-    #"TINYGLTF_BUILD_LOADER_EXAMPLE OFF"
-    #"TINYGLTF_INSTALL OFF"
     DOWNLOAD_ONLY YES
 )
 
-if(tinygltf_ADDED)
-    # tinygltf's CMake support kinda sucks, so we do it ourself.
-    add_library(tinygltf STATIC)
-    luastg_external_target_common_options(tinygltf)
-    target_compile_definitions(tinygltf PUBLIC
-        TINYGLTF_NO_STB_IMAGE_WRITE
-    )
-    # In order to avoid using its own JSON and stb libs,
-    # you must first pull the header file to a separate folder
-    file(WRITE ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h "PLACEHOLD")
-    file(REMOVE
-        ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h
-    )
-    file(COPY_FILE
-        ${tinygltf_SOURCE_DIR}/tiny_gltf.h
-        ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h
-    )
-    # Configure include path to avoid using its own JSON and stb libs
-    target_include_directories(tinygltf PUBLIC
-        ${CMAKE_BINARY_DIR}/tinygltf
-        ${nlohmann_json_SOURCE_DIR}/include/nlohmann # Very stupid
-    )
-    target_sources(tinygltf PRIVATE
-        ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h
-        ${tinygltf_SOURCE_DIR}/tiny_gltf.cc
-    )
-    target_link_libraries(tinygltf PRIVATE
-        nlohmann_json
-        nothings_stb
-    )
-    set_target_properties(tinygltf PROPERTIES FOLDER external)
-endif()
+file(WRITE ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h "PLACEHOLD")
+file(REMOVE
+    ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h
+)
+file(COPY_FILE
+    ${tinygltf_SOURCE_DIR}/tiny_gltf.h
+    ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h
+)
 
-# # tinyobjloader
-# # Parser for OBJ files
+list(APPEND LSTG_EXTERNAL_SOURCES ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h)
+list(APPEND LSTG_EXTERNAL_HEADERS ${CMAKE_BINARY_DIR}/tinygltf/tiny_gltf.h)
+list(APPEND LSTG_EXTERNAL_DEFINES TINYGLTF_IMPLEMENTATION)
+list(APPEND LSTG_EXTERNAL_INCDIRS $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tinygltf>)
 
-# CPMAddPackage(
-#     NAME tinyobjloader
-#     #VERSION 2.0.0
-#     GITHUB_REPOSITORY tinyobjloader/tinyobjloader
-#     GIT_TAG v2.0.0rc10
-#     DOWNLOAD_ONLY YES
-# )
-
-# if(tinyobjloader_ADDED)
-#     # tinyobjloader's CMake support kinda sucks, so we do it ourself.
-#     add_library(tinyobjloader STATIC)
-#     target_include_directories(tinyobjloader PUBLIC
-#         ${tinyobjloader_SOURCE_DIR}
-#     )
-#     target_sources(tinyobjloader PRIVATE
-#         ${tinyobjloader_SOURCE_DIR}/tiny_obj_loader.h
-#         ${tinyobjloader_SOURCE_DIR}/tiny_obj_loader.cc
-#     )
-#     set_target_properties(tinyobjloader PROPERTIES FOLDER external)
-# endif()
 
 # freetype
 # Font utilities
 
 CPMAddPackage(
     NAME freetype
-    VERSION 2.13.1
-    #GITHUB_REPOSITORY freetype/freetype
-    #GIT_TAG VER-2-13-1
-    URL https://gitlab.freedesktop.org/freetype/freetype/-/archive/VER-2-13-1/freetype-VER-2-13-1.zip
+    GITHUB_REPOSITORY freetype/freetype
+    GIT_TAG VER-2-13-3
     OPTIONS
-    "FT_DISABLE_ZLIB ON"
-    "FT_DISABLE_BZIP2 ON"
-    "FT_DISABLE_PNG ON"
-    "FT_DISABLE_HARFBUZZ ON"
-    "FT_DISABLE_BROTLI ON"
+        "FT_DISABLE_ZLIB ON"
+        "FT_DISABLE_BZIP2 ON"
+        "FT_DISABLE_PNG ON"
+        "FT_DISABLE_HARFBUZZ ON"
+        "FT_DISABLE_BROTLI ON"
 )
 
-if(freetype_ADDED)
-    if(TARGET freetype)
-        luastg_external_target_common_options(freetype)
-        if(MSVC)
-            target_compile_options(freetype PRIVATE
-                "/utf-8" # Unicode warning
-            )
-        endif()
-        set_target_properties(freetype PROPERTIES FOLDER external)
-    endif()
+lstgext_tgtopts_full(freetype)
+if(MSVC)
+    target_compile_options(freetype PRIVATE
+        "/utf-8" # Unicode warning
+    )
 endif()
+set_target_properties(freetype PROPERTIES FOLDER external)
 
+list(APPEND LSTG_EXTERNAL_ALL_INCDIRS ${freetype_SOURCE_DIR}/include/freetype)

@@ -12,6 +12,7 @@ jobs:
 
       matrix:
         os: [ubuntu-20.04, windows-latest, macos-14]
+        shared: [ON, OFF]
         target_arch:
           - main: x86_64
             main-win: AMD64
@@ -23,18 +24,16 @@ jobs:
             rev-win: AVX2
           - main: arm64
             main-win: ARM64
-            rev: armv8-a
-            rev-win: armv8.0
+            rev: armv8.2-a
+            rev-win: armv8.2
 
     steps:
     - name: Configure Linux (arm)
       if: ${{ runner.os == 'Linux' && matrix.target_arch.main == 'arm64' }}
       run: |
         sudo dpkg --add-architecture arm64
-        sudo cat /etc/apt/sources.list
         # sudo sed -i "/Components: /a Architectures: amd64" /etc/apt/sources.list.d/ubuntu.sources
         sudo sed -Ei 's/deb (\w)/deb [arch=amd64] \1/g' /etc/apt/sources.list
-        sudo cat /etc/apt/sources.list
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal main restricted"                                | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal-updates main restricted"                        | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports focal universe"                                       | sudo tee -a /etc/apt/sources.list > /dev/null

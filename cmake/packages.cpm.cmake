@@ -7,61 +7,39 @@ CPMAddPackage(
     GITHUB_REPOSITORY nlohmann/json
     OPTIONS
     "JSON_BuildTests OFF"
+    "JSON_Install ON"
 )
+
 
 # gabime spdlog
 # Logging utility
+
+if(WIN32)
+    set(SPDLOG_WIN32_OPTS
+        "SPDLOG_WCHAR_FILENAMES ON"
+        "SPDLOG_WCHAR_SUPPORT ON"
+    )
+endif()
 
 CPMAddPackage(
     NAME spdlog
     VERSION 1.12.0
     GITHUB_REPOSITORY gabime/spdlog
     OPTIONS
-    # "SPDLOG_WCHAR_FILENAMES ON"
-    # "SPDLOG_WCHAR_SUPPORT ON"
+    ${SPDLOG_WIN32_OPTS}
     "SPDLOG_DISABLE_DEFAULT_LOGGER ON"
+    "SPDLOG_INSTALL ON"
 )
 
-luastg_external_target_common_options(spdlog)
+lstgext_tgtopts_full(spdlog)
 
-if(TARGET spdlog)
-    if(MSVC)
-        target_compile_options(spdlog PUBLIC
-            "/DSPDLOG_SHORT_LEVEL_NAMES={\"V\",\"D\",\"I\",\"W\",\"E\",\"F\",\"O\"}"
-        )
-    endif()
-    set_target_properties(spdlog PROPERTIES FOLDER external)
+if(MSVC)
+    target_compile_options(spdlog PUBLIC
+        "/DSPDLOG_SHORT_LEVEL_NAMES={\"V\",\"D\",\"I\",\"W\",\"E\",\"F\",\"O\"}"
+    )
 endif()
+set_target_properties(spdlog PROPERTIES FOLDER external)
 
-# pugixml
-# XML file support
-
-CPMAddPackage(
-    NAME pugixml
-    VERSION 1.13
-    GITHUB_REPOSITORY zeux/pugixml
-    DOWNLOAD_ONLY YES
-)
-
-if(pugixml_ADDED)
-    # pugixml's CMake support kinda sucks, so we do it ourself.
-    add_library(pugixml STATIC)
-    luastg_external_target_common_options(pugixml)
-    target_include_directories(pugixml PUBLIC
-        ${pugixml_SOURCE_DIR}/src
-    )
-    target_sources(pugixml PRIVATE
-        ${pugixml_SOURCE_DIR}/src/pugiconfig.hpp
-        ${pugixml_SOURCE_DIR}/src/pugixml.hpp
-        ${pugixml_SOURCE_DIR}/src/pugixml.cpp
-    )
-    set(pugixml_natvis ${pugixml_SOURCE_DIR}/scripts/natvis/pugixml.natvis)
-    source_group(TREE ${pugixml_SOURCE_DIR}/scripts FILES ${pugixml_natvis})
-    target_sources(pugixml PUBLIC
-        ${pugixml_natvis}
-    )
-    set_target_properties(pugixml PROPERTIES FOLDER external)
-endif()
 
 # nothings stb
 # Misc tools
@@ -69,68 +47,28 @@ endif()
 CPMAddPackage(
     NAME nothings_stb
     GITHUB_REPOSITORY nothings/stb
-    GIT_TAG ae721c50eaf761660b4f90cc590453cdb0c2acd0
+    GIT_TAG 5c205738c191bcb0abc65c4febfa9bd25ff35234
     DOWNLOAD_ONLY YES
 )
 
-if(nothings_stb_ADDED)
-    # stb does not come with CMake support
-    add_library(nothings_stb STATIC)
-    luastg_external_target_common_options(nothings_stb)
-    target_include_directories(nothings_stb PUBLIC
-        ${nothings_stb_SOURCE_DIR}
-        ${CMAKE_BINARY_DIR}/nothings_stb/include
-    )
-    file(WRITE ${CMAKE_BINARY_DIR}/nothings_stb/include/stb_vorbis.h
-        "#define STB_VORBIS_HEADER_ONLY\n"
-        "#include \"stb_vorbis.c\"\n"
-        "#undef STB_VORBIS_HEADER_ONLY\n"
-    )
-    file(WRITE ${CMAKE_BINARY_DIR}/nothings_stb/nothings_stb.c
-        "#define STB_IMAGE_IMPLEMENTATION\n"
-        "#include \"stb_image.h\"\n"
-        "#include \"stb_vorbis.c\"\n"
-    )
-    target_sources(nothings_stb PRIVATE
-        ${CMAKE_BINARY_DIR}/nothings_stb/include/stb_vorbis.h
-        ${nothings_stb_SOURCE_DIR}/stb_image.h
-        ${CMAKE_BINARY_DIR}/nothings_stb/nothings_stb.c
-    )
-    set_target_properties(nothings_stb PROPERTIES FOLDER external)
-endif()
+list(APPEND LSTG_EXTERNAL_SOURCES
+    ${nothings_stb_SOURCE_DIR}/stb_vorbis.c
+    ${nothings_stb_SOURCE_DIR}/stb_image.h
+    ${nothings_stb_SOURCE_DIR}/stb_image_write.h
+    ${nothings_stb_SOURCE_DIR}/stb_rect_pack.h
+ )
+list(APPEND LSTG_STB_HEADERS
+    ${nothings_stb_SOURCE_DIR}/stb_image.h
+    ${nothings_stb_SOURCE_DIR}/stb_image_write.h
+    ${nothings_stb_SOURCE_DIR}/stb_rect_pack.h
+)
+list(APPEND LSTG_STB_BASEDIRS ${nothings_stb_SOURCE_DIR})
+list(APPEND LSTG_EXTERNAL_DEFINES
+    STB_IMAGE_IMPLEMENTATION
+    STB_IMAGE_WRITE_IMPLEMENTATION
+    STB_RECT_PACK_IMPLEMENTATION
+)
 
-# # dr_libs
-# # Decode WAV and MP3 files
-
-# CPMAddPackage(
-#     NAME dr_libs
-#     GITHUB_REPOSITORY mackron/dr_libs
-#     GIT_TAG e07e2b8264da5fa1331a0ca3d30a3606084c311f
-#     DOWNLOAD_ONLY YES
-# )
-
-# if(dr_libs_ADDED)
-#     # dr_libs does not come with CMake support
-#     add_library(dr_libs STATIC)
-#     target_include_directories(dr_libs PUBLIC
-#         ${dr_libs_SOURCE_DIR}
-#     )
-#     file(WRITE ${CMAKE_BINARY_DIR}/dr_libs/dr_libs.c
-#         "#define DR_WAV_IMPLEMENTATION\n"
-#         "#define DR_MP3_IMPLEMENTATION\n"
-#         "#define DR_FLAC_IMPLEMENTATION\n"
-#         "#include \"dr_wav.h\"\n"
-#         "#include \"dr_mp3.h\"\n"
-#         "#include \"dr_flac.h\"\n"
-#     )
-#     target_sources(dr_libs PRIVATE
-#         ${dr_libs_SOURCE_DIR}/dr_wav.h
-#         ${dr_libs_SOURCE_DIR}/dr_mp3.h
-#         ${dr_libs_SOURCE_DIR}/dr_flac.h
-#         ${CMAKE_BINARY_DIR}/dr_libs/dr_libs.c
-#     )
-#     set_target_properties(dr_libs PROPERTIES FOLDER external)
-# endif()
 
 # pcg random
 # High-quality RNG
@@ -142,12 +80,9 @@ CPMAddPackage(
     DOWNLOAD_ONLY YES
 )
 
-if(pcg_cpp_ADDED)
-    add_library(pcg_cpp INTERFACE)
-    target_include_directories(pcg_cpp INTERFACE
-        ${pcg_cpp_SOURCE_DIR}/include
-    )
-endif()
+file(GLOB LSTG_PCG_HEADERS ${pcg_cpp_SOURCE_DIR}/include/*.hpp)
+list(APPEND LSTG_PCG_BASEDIRS ${pcg_cpp_SOURCE_DIR}/include)
+
 
 # xxhash
 # High-quality high-performance hash lib (not password-secure)
@@ -159,24 +94,10 @@ CPMAddPackage(
     DOWNLOAD_ONLY YES
 )
 
-if(xxhash_ADDED)
-    add_library(xxhash STATIC)
-    luastg_external_target_common_options(xxhash)
-    set_target_properties(xxhash PROPERTIES
-        C_STANDARD 17
-        C_STANDARD_REQUIRED ON
-        CXX_STANDARD 20
-        CXX_STANDARD_REQUIRED ON
-    )
-    target_include_directories(xxhash PUBLIC
-        ${xxhash_SOURCE_DIR}
-    )
-    target_sources(xxhash PRIVATE
-        ${xxhash_SOURCE_DIR}/xxhash.c
-        ${xxhash_SOURCE_DIR}/xxhash.h
-    )
-    set_target_properties(xxhash PROPERTIES FOLDER external)
-endif()
+list(APPEND LSTG_EXTERNAL_SOURCES ${xxhash_SOURCE_DIR}/xxhash.c)
+list(APPEND LSTG_EXTERNAL_HEADERS ${xxhash_SOURCE_DIR}/xxhash.h)
+list(APPEND LSTG_EXTERNAL_INCDIRS ${xxhash_SOURCE_DIR})
+
 
 # uni-algo
 # Unicode utilities
@@ -186,5 +107,26 @@ CPMAddPackage(
     VERSION 1.2.0
     GITHUB_REPOSITORY uni-algo/uni-algo
     OPTIONS
+        "UNI_ALGO_INSTALL ON"
 )
-luastg_external_target_common_options(uni-algo)
+lstgext_tgtopts_full(uni-algo)
+
+
+# tracy
+# Profiler
+
+# hack to fix include dirs
+set(_CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
+set(CMAKE_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/tracy)
+
+CPMAddPackage(
+    NAME tracy
+    VERSION 0.11.1
+    GITHUB_REPOSITORY wolfpld/tracy
+    OPTIONS
+        "TRACY_ENABLE OFF"
+)
+lstgext_tgtopts_full(TracyClient)
+
+# reset hack
+set(CMAKE_INSTALL_INCLUDEDIR ${_CMAKE_INSTALL_INCLUDEDIR})
