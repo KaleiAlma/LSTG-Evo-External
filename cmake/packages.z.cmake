@@ -5,7 +5,7 @@
 CPMAddPackage(
     NAME minizip_ng
     GITHUB_REPOSITORY zlib-ng/minizip-ng
-    GIT_TAG 4.0.5
+    GIT_TAG 4.0.8
     OPTIONS
         "ZLIB_ENABLE_TESTS OFF"
         "ZLIBNG_ENABLE_TESTS OFF"
