@@ -27,10 +27,8 @@ CPMAddPackage(
 )
 
 if(BUILD_SHARED_LIBS)
-    lstgext_tgtopts_base(SDL3-shared)
     lstgext_tgtopts_unicode(SDL3-shared)
 else()
-    lstgext_tgtopts_base(SDL3-static)
     lstgext_tgtopts_unicode(SDL3-static)
 endif()
 
