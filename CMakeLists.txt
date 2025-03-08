@@ -63,6 +63,9 @@ option(BUILD_SHARED_LIBS "" ON)
 
 if(NOT BUILD_SHARED_LIBS)
     set(LSTGEXT_BUILD_STATIC_LIBS ON)
+    message("== [ Building static libraries ] ==")
+else()
+    message("== [ Building shared libraries ] ==")
 endif()
 
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
