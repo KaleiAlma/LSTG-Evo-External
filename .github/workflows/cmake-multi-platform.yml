@@ -62,7 +62,8 @@ jobs:
     - name: Configure Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        choco install ninja llvm
+        choco install ninja
+        choco upgrade llvm
         Install-Module -Name VCVars -Confirm:$false -Force
         (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
