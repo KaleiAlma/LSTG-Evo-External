@@ -67,6 +67,7 @@ jobs:
         Install-Module -Name VCVars -Confirm:$false -Force
         (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
+        git config --system core.longpaths true
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@19 lld
