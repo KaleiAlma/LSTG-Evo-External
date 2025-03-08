@@ -3,7 +3,7 @@ set(CMAKE_SYSTEM_NAME Darwin)
 set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "")
 
 execute_process(
-    COMMAND brew --prefix llvm@18
+    COMMAND brew --prefix llvm@19
     OUTPUT_VARIABLE LLVM_DIR
 )
 

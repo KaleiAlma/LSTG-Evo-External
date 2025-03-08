@@ -55,20 +55,16 @@ jobs:
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
           libpipewire-0.3-dev libaudio-dev libjack-dev libsndio-dev \
           libasound2-dev libpulse-dev libpulse-mainloop-glib0 libglib2.0-dev libxkbcommon-dev
-        sudo rm -f /usr/bin/clang /usr/bin/clang++
-        sudo ln -s /usr/bin/clang-18 /usr/bin/clang
-        sudo ln -s /usr/bin/clang++-18 /usr/bin/clang++
-        sudo ln -s /usr/bin/ld.lld-18 /usr/bin/ld.lld
     - name: Configure Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        choco install ninja
+        choco install ninja llvm
         Install-Module -Name VCVars -Confirm:$false -Force
         (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
-      run: brew install ninja llvm@18 lld
+      run: brew install ninja llvm@19 lld
 
     - name: Checkout Repo
       uses: actions/checkout@v4

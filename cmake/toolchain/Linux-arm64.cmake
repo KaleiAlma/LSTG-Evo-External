@@ -3,8 +3,8 @@ if(NOT CMAKE_HOST_SYSTEM_NAME EQUAL "Linux")
     set(CMAKE_SYSTEM_NAME Linux)
 endif()
 
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_C_COMPILER clang-19)
+set(CMAKE_CXX_COMPILER clang++-19)
 
 if(NOT CMAKE_HOST_SYSTEM_PROCESSOR EQUAL aarch64)
     set(CMAKE_C_COMPILER_TARGET aarch64-linux-gnu)
