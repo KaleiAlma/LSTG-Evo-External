@@ -53,6 +53,7 @@ jobs:
         # sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main"     | sudo tee -a /etc/apt/sources.list > /dev/null
         echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main" | sudo tee -a /etc/apt/sources.list > /dev/null
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo apt update
         sudo apt install llvm clang lld \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
