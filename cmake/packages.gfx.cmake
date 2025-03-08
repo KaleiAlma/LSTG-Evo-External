@@ -1,23 +1,3 @@
-# # sdl2
-
-# CPMAddPackage(
-#     NAME SDL2
-#     GITHUB_REPOSITORY libsdl-org/SDL
-#     GIT_TAG release-2.32.0
-#     OPTIONS
-#         "SDL2_DISABLE_INSTALL OFF"
-#         "SDL2_DISABLE_UNINSTALL ON"
-#         "SDL_TEST OFF"
-#         "SDL_SHARED ${BUILD_SHARED_LIBS}"
-# )
-
-# if(BUILD_SHARED_LIBS)
-#     lstgext_tgtopts_full(SDL2)
-# else()
-#     lstgext_tgtopts_full(SDL2-static)
-# endif()
-# lstgext_tgtopts_full(SDL2main)
-
 # sdl3
 
 CPMAddPackage(
@@ -32,7 +12,8 @@ CPMAddPackage(
         "SDL_UNINSTALL OFF"
         "SDL_TEST OFF"
         "SDL_TEST_LIBRARY OFF"
-        # "SDL_SHARED ${BUILD_SHARED_LIBS}"
+        "SDL_SHARED ${BUILD_SHARED_LIBS}"
+        "SDL_STATIC ${LSTGEXT_BUILD_STATIC_LIBS}"
         "SDL_ASSEMBLY ON"
         "SDL_MMX ${LSTG_x86_64}"
         "SDL_SSE ${LSTG_x86_64}"
@@ -52,6 +33,43 @@ else()
     lstgext_tgtopts_base(SDL3-static)
     lstgext_tgtopts_unicode(SDL3-static)
 endif()
+
+
+# sdl_shadercross
+
+CPMAddPackage(
+    NAME SDL_shadercross
+    GITHUB_REPOSITORY libsdl-org/SDL_shadercross
+    GIT_TAG db758697661c59718ae02786d667d24f94d3c88b
+    OPTIONS
+        "SDLSHADERCROSS_INSTALL ON"
+        "SDLSHADERCROSS_DXC ON"
+        "SDLSHADERCROSS_SPIRVCROSS_SHARED ${BUILD_SHARED_LIBS}"
+        "SDLSHADERCROSS_SHARED ${BUILD_SHARED_LIBS}"
+        "SDLSHADERCROSS_STATIC ${LSTGEXT_BUILD_STATIC_LIBS}"
+        "SDLSHADERCROSS_VENDORED ON"
+)
+
+if(BUILD_SHARED_LIBS)
+    lstgext_tgtopts_full(SDL3_shadercross-shared)
+else()
+    lstgext_tgtopts_full(SDL3_shadercross-static)
+endif()
+
+
+# glslang
+
+CPMAddPackage(
+    NAME glslang
+    GITHUB_REPOSITORY KhronosGroup/glslang
+    GIT_TAG 15.1.0
+    OPTIONS
+        "BUILD_EXTERNAL OFF"
+        "ENABLE_GLSLANG_JS OFF"
+        "ENABLE_SPVREMAPPER OFF"
+        "GLSLANG_ENABLE_INSTALL ON"
+)
+
 
 # g-truc glm
 # OpenGL math library

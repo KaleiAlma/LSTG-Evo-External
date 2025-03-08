@@ -59,11 +59,19 @@ endif()
 message("== [ Compiling LuaSTG Evo dependencies for ${TARGET_ARCHITECTURE} (${TARGET_ARCH_REV}/${TARGET_ARCH_REV_WIN}) architecture ] ==")
 include(cmake/tgt-common.cmake)
 
+option(BUILD_SHARED_LIBS "" ON)
+
+if(NOT BUILD_SHARED_LIBS)
+    set(LSTGEXT_BUILD_STATIC_LIBS ON)
+endif()
+
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
 set(SKIP_INSTALL_ALL FALSE)
 set(SKIP_INSTALL_LIBRARIES FALSE)
-option(LSTG_EXTERNAL_INSTALL_SUBDIR lstgext)
+set(LSTG_EXTERNAL_INSTALL_SUBDIR lstgext CACHE STRING "")
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${LSTG_EXTERNAL_INSTALL_SUBDIR})
+set(CMAKE_INSTALL_LIBDIR lib)
+
 set(LSTG_EXTERNAL_SOURCES)
 set(LSTG_EXTERNAL_HEADERS)
 set(LSTG_EXTERNAL_DEFINES)
@@ -281,6 +289,8 @@ set(ExternalLibs
     sol2
 
     SDL3::SDL3
+    SDL3_shadercross::SDL3_shadercross
+    glslang SPIRV
     glm
     freetype
 
@@ -324,7 +334,7 @@ target_include_directories(lstgext PUBLIC
 target_link_libraries(lstgext PUBLIC ${ExternalLibs})
 
 add_custom_target(external-build
-    DEPENDS ${ExternalLibs} lstgext
+    DEPENDS ${ExternalLibs} shadercross glslang-standalone lstgext
 )
 
 install(TARGETS lstgext
