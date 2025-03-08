@@ -50,8 +50,10 @@ jobs:
     - name: Configure Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-        sudo apt install \
+        # sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main
+        deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main
+        sudo apt install llvm-19 clang-19 lld-19 \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
           libpipewire-0.3-dev libaudio-dev libjack-dev libsndio-dev \
           libasound2-dev libpulse-dev libpulse-mainloop-glib0 libglib2.0-dev libxkbcommon-dev
