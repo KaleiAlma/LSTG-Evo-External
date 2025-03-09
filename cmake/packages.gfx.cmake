@@ -24,6 +24,7 @@ CPMAddPackage(
         "SDL_AVX ${LSTG_AVX}"
         "SDL_AVX2 ${LSTG_AVX2}"
         "SDL_AVX512F ${LSTG_AVX512F}"
+        "SDL_RENDER OFF"
 )
 
 if(BUILD_SHARED_LIBS)
