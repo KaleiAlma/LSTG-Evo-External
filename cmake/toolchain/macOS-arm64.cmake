@@ -1,5 +1,7 @@
 
-set(CMAKE_SYSTEM_NAME Darwin)
+if(NOT CMAKE_HOST_SYSTEM_NAME EQUAL "Darwin")
+    set(CMAKE_SYSTEM_NAME Darwin)
+endif()
 set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "")
 
 execute_process(
@@ -16,8 +18,10 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
 
 set(CMAKE_C_COMPILER ${LLVM_DIR}/bin/clang)
-set(CMAKE_C_COMPILER_TARGET aarch64-apple-darwin)
 set(CMAKE_CXX_COMPILER ${LLVM_DIR}/bin/clang++)
-set(CMAKE_CXX_COMPILER_TARGET aarch64-apple-darwin)
 
 set(CMAKE_LINKER_TYPE LLD)
+
+# set(CMAKE_C_COMPILER_TARGET aarch64-apple-darwin)
+# set(CMAKE_CXX_COMPILER_TARGET aarch64-apple-darwin)
+
