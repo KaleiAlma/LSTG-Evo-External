@@ -56,7 +56,7 @@ elseif(TARGET_ARCHITECTURE STREQUAL "aarch64")
     set(LSTG_ARM64 ON)
 endif()
 
-message("== [ Compiling LuaSTG Evo dependencies for ${TARGET_ARCHITECTURE} (${TARGET_ARCH_REV}/${TARGET_ARCH_REV_WIN}) architecture ] ==")
+message("== [ Compiling LuaSTG Evo dependencies for ${CMAKE_SYSTEM_NAME} ${TARGET_ARCHITECTURE} (${TARGET_ARCH_REV}/${TARGET_ARCH_REV_WIN}) architecture ] ==")
 include(cmake/tgt-common.cmake)
 
 option(BUILD_SHARED_LIBS "" ON)
