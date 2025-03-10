@@ -1,7 +1,7 @@
-diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
+diff --git a/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake b/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
 index 76a3078a5..a62f517e2 100644
---- a/cmake/modules/CrossCompile.cmake
-+++ b/cmake/modules/CrossCompile.cmake
+--- a/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
++++ b/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
 -function(llvm_create_cross_target_internal target_name toochain buildtype)
 +function(llvm_create_cross_target_internal target_name toolchain buildtype)
