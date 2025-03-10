@@ -293,7 +293,7 @@ set(ExternalLibs
 
     SDL3::SDL3
     SDL3_shadercross::SDL3_shadercross
-    glslang SPIRV OSDependent MachineIndependent
+    glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
     glm
     freetype
 
