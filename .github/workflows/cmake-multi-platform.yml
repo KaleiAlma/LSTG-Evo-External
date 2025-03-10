@@ -73,7 +73,7 @@ jobs:
       run: |
         (vcvars AMD64).GetEnumerator() | Foreach {
           $val = $_.Value
-          $val.Replace(';','\\;')
+          $val = $val.Replace(';','\;')
           $env:VCVARS_NATIVE += "$($_.Key)=$($val);"
         }
         "VCVARS_NATIVE=$($env:VCVARS_NATIVE)" >> "$env:GITHUB_ENV"
