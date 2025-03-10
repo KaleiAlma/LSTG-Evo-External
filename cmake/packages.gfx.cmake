@@ -49,8 +49,6 @@ CPMAddPackage(
         "SDLSHADERCROSS_STATIC ${LSTGEXT_BUILD_STATIC_LIBS}"
         "SDLSHADERCROSS_VENDORED ON"
         "SPIRV_WERROR OFF"
-        "LLVM_ENABLE_EH ON"
-        "LLVM_REQUIRES_EH ON"
 )
 
 if(BUILD_SHARED_LIBS)
@@ -66,13 +64,11 @@ CPMAddPackage(
     NAME glslang
     GITHUB_REPOSITORY KhronosGroup/glslang
     GIT_TAG 15.1.0
-    PATCHES "glslang.patch"
     OPTIONS
         "BUILD_EXTERNAL OFF"
         "ENABLE_GLSLANG_JS OFF"
         "ENABLE_SPVREMAPPER OFF"
         "GLSLANG_ENABLE_INSTALL ON"
-        "ENABLE_EXCEPTIONS ON"
 )
 
 
