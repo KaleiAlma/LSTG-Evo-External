@@ -2,6 +2,10 @@
 # Load zip files
 
 
+if(WIN32 AND LSTG_ARM64) # zlib arm intrinsics are broken on windows
+    set(WITH_NEON OFF CACHE BOOL "" FORCE)
+endif()
+
 CPMAddPackage(
     NAME minizip_ng
     GITHUB_REPOSITORY zlib-ng/minizip-ng
@@ -23,10 +27,6 @@ CPMAddPackage(
 
 if(LINUX AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # lld is broken when cross-compiling
     set_target_properties(minizip PROPERTIES LINKER_TYPE BFD)
-endif()
-
-if(WIN32 AND LSTG_ARM64) # zlib arm intrinsics are broken on windows
-    set(WITH_NEON OFF CACHE BOOL "" FORCE)
 endif()
 
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
