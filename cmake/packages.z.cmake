@@ -1,10 +1,8 @@
 # minizip
 # Load zip files
 
-set(LSTGEXT_ARM64_ZLIB_NEON LSTG_ARM64)
-
 if(WINDOWS AND LSTG_ARM64) # zlib arm intrinsics are broken on windows
-    set(LSTGEXT_ARM64_ZLIB_NEON OFF)
+    set(WITH_NEON OFF CACHE BOOL "" FORCE)
 endif()
 
 CPMAddPackage(
@@ -24,7 +22,6 @@ CPMAddPackage(
         "WITH_SSE42 ${LSTG_SSE4_2}"
         "WITH_AVX2 ${LSTG_AVX2}"
         "WITH_AVX512 ${LSTG_AVX512F}"
-        "WITH_NEON ${LSTGEXT_ARM64_ZLIB_NEON}"
 )
 
 if(LINUX AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # lld is broken when cross-compiling
