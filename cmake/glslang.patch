@@ -1,0 +1,101 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0e326e0e..9611e812 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -144,16 +144,16 @@ else()
+ endif()
+ 
+ if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+-    add_compile_options(-Wall -Wmaybe-uninitialized -Wuninitialized -Wunused -Wunused-local-typedefs -Wimplicit-fallthrough
++    list(APPEND GLSLANG_COMPILE_OPTS -Wall -Wmaybe-uninitialized -Wuninitialized -Wunused -Wunused-local-typedefs -Wimplicit-fallthrough
+                         -Wunused-parameter -Wunused-value  -Wunused-variable -Wunused-but-set-parameter -Wunused-but-set-variable -fno-exceptions)
+     if(NOT ENABLE_RTTI)
+-        add_compile_options(-fno-rtti)
++        list(APPEND GLSLANG_COMPILE_OPTS -fno-rtti)
+     endif()
+     if(NOT ENABLE_EXCEPTIONS)
+-        add_compile_options(-fno-exceptions)
++        list(APPEND GLSLANG_COMPILE_OPTS -fno-exceptions)
+     endif()
+     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0")
+-        add_compile_options(-Werror=deprecated-copy)
++        list(APPEND GLSLANG_COMPILE_OPTS -Werror=deprecated-copy)
+     endif()
+ 
+     if(NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD"))
+@@ -163,13 +163,13 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+         endif()
+     endif()
+ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND NOT MSVC)
+-    add_compile_options(-Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wimplicit-fallthrough
++    list(APPEND GLSLANG_COMPILE_OPTS -Wall -Wuninitialized -Wunused -Wunused-local-typedefs -Wimplicit-fallthrough
+                         -Wunused-parameter -Wunused-value  -Wunused-variable)
+     if(NOT ENABLE_RTTI)
+-        add_compile_options(-fno-rtti)
++        list(APPEND GLSLANG_COMPILE_OPTS -fno-rtti)
+     endif()
+     if(NOT ENABLE_EXCEPTIONS)
+-        add_compile_options(-fno-exceptions)
++        list(APPEND GLSLANG_COMPILE_OPTS -fno-exceptions)
+     endif()
+ 
+     if(NOT (CMAKE_SYSTEM_NAME MATCHES "OpenBSD|Emscripten"))
+@@ -184,34 +184,34 @@ elseif(MSVC)
+         if(MSVC_HAS_GR)
+             string(REGEX REPLACE "/GR" "/GR-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+         else()
+-            add_compile_options(/GR-) # Disable RTTI
++            list(APPEND GLSLANG_COMPILE_OPTS /GR-) # Disable RTTI
+         endif()
+     endif()
+     if(ENABLE_EXCEPTIONS)
+-        add_compile_options(/EHsc) # Enable Exceptions
++        list(APPEND GLSLANG_COMPILE_OPTS /EHsc) # Enable Exceptions
+ 	else()
+         string(REGEX REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # Try to remove default /EHsc cxx_flag
+-        add_compile_options(/D_HAS_EXCEPTIONS=0)
++        list(APPEND GLSLANG_COMPILE_OPTS /D_HAS_EXCEPTIONS=0)
+     endif()
+ endif()
+ 
+ # NOTE we could potentially replace this logic with COMPILE_WARNING_AS_ERROR if cmake minimum is bumped to >= 3.24
+ if (BUILD_WERROR)
+     if (NOT MSVC)
+-        add_compile_options(-Werror)
++        list(APPEND GLSLANG_COMPILE_OPTS -Werror)
+     else()
+-        add_compile_options(/WX)
++        list(APPEND GLSLANG_COMPILE_OPTS /WX)
+     endif()
+ endif()
+ 
+ if(ENABLE_GLSLANG_JS)
+     if(MSVC)
+-        add_compile_options(/Os /GR-)
++        list(APPEND GLSLANG_COMPILE_OPTS /Os /GR-)
+     else()
+-        add_compile_options(-Os -fno-rtti -fno-exceptions)
++        list(APPEND GLSLANG_COMPILE_OPTS -Os -fno-rtti -fno-exceptions)
+         if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" AND NOT MSVC)
+-            add_compile_options(-Wno-unused-parameter)
+-            add_compile_options(-Wno-unused-variable -Wno-unused-const-variable)
++            list(APPEND GLSLANG_COMPILE_OPTS -Wno-unused-parameter)
++            list(APPEND GLSLANG_COMPILE_OPTS -Wno-unused-variable -Wno-unused-const-variable)
+         endif()
+     endif()
+ endif()
+@@ -321,10 +321,14 @@ endif()
+ 
+ if(ENABLE_SPIRV)
+     add_subdirectory(SPIRV)
++    target_compile_options(SPIRV PRIVATE ${GLSLANG_COMPILE_OPTS})
+ endif()
+ add_subdirectory(glslang)
++target_compile_options(MachineIndependent PRIVATE ${GLSLANG_COMPILE_OPTS})
++target_compile_options(glslang PRIVATE ${GLSLANG_COMPILE_OPTS})
+ if(ENABLE_GLSLANG_BINARIES)
+     add_subdirectory(StandAlone)
++    target_compile_options(glslang-standalone PRIVATE ${GLSLANG_COMPILE_OPTS})
+ endif()
+ 
+ if(GLSLANG_TESTS)

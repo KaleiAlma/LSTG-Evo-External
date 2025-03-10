@@ -66,6 +66,7 @@ CPMAddPackage(
     NAME glslang
     GITHUB_REPOSITORY KhronosGroup/glslang
     GIT_TAG 15.1.0
+    PATCHES "glslang.patch"
     OPTIONS
         "BUILD_EXTERNAL OFF"
         "ENABLE_GLSLANG_JS OFF"
