@@ -36,6 +36,10 @@ endif()
 
 # sdl_shadercross
 
+if(WIN32 AND NOT MINGW)
+    include_directories("$ENV{VSINSTALLDIR}\\DIA SDK\\include\\")
+endif()
+
 CPMAddPackage(
     NAME SDL_shadercross
     GITHUB_REPOSITORY libsdl-org/SDL_shadercross
