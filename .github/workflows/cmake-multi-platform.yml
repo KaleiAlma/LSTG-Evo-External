@@ -25,6 +25,10 @@ jobs:
             main_win: ARM64
             rev: armv8.2-a
             rev_win: armv8.2
+        exclude:
+          - os: macos-14
+            target_arch:
+              rev_win: AVX2
 
     steps:
     - name: Configure Linux (arm)
