@@ -26,6 +26,6 @@ set(CMAKE_CXX_COMPILER ${LLVM_DIR}/bin/clang++)
 
 set(CMAKE_LINKER_TYPE LLD)
 
-# set(CMAKE_C_COMPILER_TARGET x86_64-apple-darwin)
-# set(CMAKE_CXX_COMPILER_TARGET x86_64-apple-darwin)
+set(CMAKE_C_COMPILER_TARGET x86_64-apple-darwin)
+set(CMAKE_CXX_COMPILER_TARGET x86_64-apple-darwin)
 
