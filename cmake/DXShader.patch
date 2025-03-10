@@ -26,7 +26,7 @@ index 8f7db9978..c341fe245 100644
  # Enable CET Shadow Stack
  if(MSVC AND NOT (CMAKE_C_COMPILER_ARCHITECTURE_ID MATCHES "ARM.*"))
 diff --git a/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake b/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
-index 76a3078a5..b6bb37361 100644
+index 76a3078a5..8e4def59e 100644
 --- a/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
 +++ b/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -35,7 +35,7 @@ index 76a3078a5..b6bb37361 100644
  
    if(NOT DEFINED LLVM_${target_name}_BUILD)
      set(LLVM_${target_name}_BUILD "${CMAKE_BINARY_DIR}/${target_name}")
-@@ -16,12 +16,30 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -16,12 +16,31 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
      COMMAND ${CMAKE_COMMAND} -E make_directory ${LLVM_${target_name}_BUILD}
      COMMENT "Creating ${LLVM_${target_name}_BUILD}...")
  
@@ -51,13 +51,14 @@ index 76a3078a5..b6bb37361 100644
 +
 +  if(WINDOWS)
 +    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
-+      COMMAND ${CMAKE_COMMAND} -E env $ENV{VCVARS_NATIVE} --
++      COMMAND ${CMAKE_COMMAND} -E env "$ENV{VCVARS_NATIVE}" --
 +          ${CMAKE_COMMAND} ${build_type_flags}
 +          -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
 +          -DLLVM_REQUIRES_EH=ON
 +          ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
 +      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
 +      DEPENDS ${LLVM_${target_name}_BUILD}
++      COMMAND_EXPAND_LISTS
 +      COMMENT "Configuring ${target_name} LLVM...")
 +  else()
 +    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
@@ -72,7 +73,7 @@ index 76a3078a5..b6bb37361 100644
  
    add_custom_target(CONFIGURE_LLVM_${target_name}
                      DEPENDS ${LLVM_${target_name}_BUILD}/CMakeCache.txt)
-@@ -29,22 +47,23 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -29,22 +48,23 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES
                                        ${LLVM_${target_name}_BUILD})
  
