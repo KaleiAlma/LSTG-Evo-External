@@ -293,7 +293,7 @@ set(ExternalLibs
 
     SDL3::SDL3
     SDL3_shadercross::SDL3_shadercross
-    glslang SPIRV
+    glslang SPIRV OSDependent
     glm
     freetype
 
