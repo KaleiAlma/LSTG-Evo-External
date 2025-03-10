@@ -26,7 +26,7 @@ if(LINUX AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # lld is broken when cross-com
 endif()
 
 if(WINDOWS AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # zlib has broken arm headers
-    target_compile_definitions(zlib ARM_NEON_HASLD4)
+    target_compile_definitions(zlib PRIVATE ARM_NEON_HASLD4)
 endif()
 
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
