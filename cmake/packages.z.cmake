@@ -1,7 +1,6 @@
 # minizip
 # Load zip files
 
-
 CPMAddPackage(
     NAME minizip_ng
     GITHUB_REPOSITORY zlib-ng/minizip-ng
@@ -23,10 +22,6 @@ CPMAddPackage(
 
 if(LINUX AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # lld is broken when cross-compiling
     set_target_properties(minizip PROPERTIES LINKER_TYPE BFD)
-endif()
-
-if(WINDOWS AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # zlib has broken arm headers
-    target_compile_definitions(zlib PRIVATE ARM_NEON_HASLD4)
 endif()
 
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
