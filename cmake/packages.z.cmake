@@ -14,10 +14,19 @@ CPMAddPackage(
         "ZLIB_REPOSITORY https://github.com/zlib-ng/zlib-ng"
         "ZLIB_TAG 2.2.4"
         "ZSTD_TAG v1.5.7"
+        "WITH_SSE2 ${LSTG_x86_64}"
+        "WITH_SSSE3 ${LSTG_SSE4_2}"
+        "WITH_SSE42 ${LSTG_SSE4_2}"
+        "WITH_AVX2 ${LSTG_AVX2}"
+        "WITH_AVX512 ${LSTG_AVX512F}"
 )
 
 if(LINUX AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # lld is broken when cross-compiling
     set_target_properties(minizip PROPERTIES LINKER_TYPE BFD)
+endif()
+
+if(WINDOWS AND LSTG_ARM64 AND CMAKE_CROSSCOMPILING) # zlib has broken arm headers
+    target_compile_definitions(zlib ARM_NEON_HASLD4)
 endif()
 
 # thankfully i figured out how to make zlib-ng/minizip-ng play nice ig
