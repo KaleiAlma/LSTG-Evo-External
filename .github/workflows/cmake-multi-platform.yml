@@ -68,6 +68,12 @@ jobs:
         (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
         git config --system core.longpaths true
+    - name: Configure Windows (arm)
+      if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' }}
+      run: |
+        (vcvars AMD64).GetEnumerator()
+        | Foreach { $env:VCVARS_NATIVE += "$($_.Key)=$($_.Value);" }
+        "VCVARS_NATIVE=$env:VCVARS_NATIVE" >> "$env:GITHUB_ENV"
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@19 lld
