@@ -1,0 +1,28 @@
+diff --git a/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake b/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
+index 76a3078a5..1c756d315 100644
+--- a/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
++++ b/external/DirectXShaderCompiler/cmake/modules/CrossCompile.cmake
+@@ -1,4 +1,4 @@
+-function(llvm_create_cross_target_internal target_name toochain buildtype)
++function(llvm_create_cross_target_internal target_name toolchain buildtype)
+ 
+   if(NOT DEFINED LLVM_${target_name}_BUILD)
+     set(LLVM_${target_name}_BUILD "${CMAKE_BINARY_DIR}/${target_name}")
+@@ -18,7 +18,7 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+ 
+   add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
+     COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+-        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_SOURCE_DIR}
++        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
+     WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
+     DEPENDS ${LLVM_${target_name}_BUILD}
+     COMMENT "Configuring ${target_name} LLVM...")
+@@ -42,7 +42,7 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+     endif()
+     execute_process(COMMAND ${CMAKE_COMMAND} ${build_type_flags}
+         -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
+-        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_SOURCE_DIR}
++        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
+       WORKING_DIRECTORY ${LLVM_${target_name}_BUILD} )
+   endif(NOT IS_DIRECTORY ${LLVM_${target_name}_BUILD})
+ 
