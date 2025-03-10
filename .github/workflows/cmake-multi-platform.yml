@@ -72,7 +72,7 @@ jobs:
       if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' }}
       run: |
         (vcvars AMD64).GetEnumerator()
-        | Foreach { $env:VCVARS_NATIVE += "$($_.Key)=$($_.Value);" }
+        | Foreach { $env:VCVARS_NATIVE += "$($_.Key)=$($_.Value) " }
         "VCVARS_NATIVE=$env:VCVARS_NATIVE" >> "$env:GITHUB_ENV"
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
