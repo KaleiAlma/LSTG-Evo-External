@@ -3,7 +3,7 @@
 CPMAddPackage(
     NAME luajit
     GITHUB_REPOSITORY KaleiAlma/LuaJIT-Evo
-    GIT_TAG bdffda0d1de1f10c62f5992adfc9824ad55a4801
+    GIT_TAG 10239515c4044e2431ca850bd8103f2c6c61040a
 )
 
 
