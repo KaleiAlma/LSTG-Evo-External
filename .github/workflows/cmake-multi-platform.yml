@@ -121,6 +121,7 @@ jobs:
       with:
         path: ${{ github.workspace }}/build/SDL3-shared
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3
+        run-id: 13779866561
 
     - name: Download previously-built SDL3 (static)
       if: ${{ inputs.sdl3 }}
@@ -128,6 +129,7 @@ jobs:
       with:
         path: ${{ github.workspace }}/build/SDL3-static
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3
+        run-id: 13779866561
 
     - name: Fix SDL3 paths
       if: ${{ inputs.sdl3 }}
