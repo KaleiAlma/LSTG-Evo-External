@@ -18,6 +18,7 @@ CPMAddPackage(
     GIT_SUBMODULES_RECURSE OFF
     OPTIONS
         "SPIRV_WERROR OFF"
+        "SPIRV_SKIP_EXECUTABLES ON"
 )
 
 CPMAddPackage(
