@@ -161,9 +161,9 @@ jobs:
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
         &&
         cmake --install ${{ github.workspace }}/build
+        ${{ inputs.build == 'shader' && format('&& rm {0}/build/CMakeLists.txt', github.workspace) || '' }}
         &&
         cmake -B ${{ github.workspace }}/build
-        ${{ inputs.build == 'shader' && '--fresh' || '' }}
         -UBUILD_SHARED_LIBS
         -USDL_SHARED
         -USDL_STATIC
