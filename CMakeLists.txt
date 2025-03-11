@@ -125,16 +125,6 @@ include(${CPM_DOWNLOAD_LOCATION})
 # ==================== graphics ==================== #
 #====================================================#
 
-
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_GFX)
-    include(cmake/packages.gfx.cmake)
-    list(APPEND ExternalLibs
-        SDL3::SDL3
-        glm
-        freetype
-    )
-endif()
-
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     include(cmake/packages.shader.cmake)
     list(APPEND ExternalLibs
@@ -144,6 +134,14 @@ if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
 endif()
 
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
+
+include(cmake/packages.gfx.cmake)
+list(APPEND ExternalLibs
+    SDL3::SDL3
+    glm
+    freetype
+)
+
 
 #===============================================#
 # ==================== lua ==================== #

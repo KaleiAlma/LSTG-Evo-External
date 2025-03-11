@@ -30,7 +30,6 @@ jobs:
         build:
           - shader
           - zip
-          - gfx
           - misc
         exclude:
           - os: macos-14
