@@ -98,8 +98,6 @@ else()
     set(LSTGEXT_BUILD_${LSTGEXT_BUILD} ON)
 endif()
 
-message("BUILD: ${LSTGEXT_BUILD_ALL}")
-
 # ==================== cpm ====================
 
 set(CPM_DOWNLOAD_VERSION 0.40.0)
@@ -148,6 +146,7 @@ endif()
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     include(cmake/packages.shader.cmake)
     list(APPEND ExternalLibs
+        spirv-cross-util
         SDL3_shadercross::SDL3_shadercross
         glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
     )
