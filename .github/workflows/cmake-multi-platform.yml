@@ -152,7 +152,7 @@ jobs:
       id: archive-shared
       uses: actions/upload-artifact@v4
       with:
-        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared
+        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-${{ matrix.build }}
         path: ${{ github.workspace }}/build/shared
         retention-days: 7
 
@@ -160,7 +160,7 @@ jobs:
       id: archive-static
       uses: actions/upload-artifact@v4
       with:
-        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static
+        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-${{ matrix.build }}
         path: ${{ github.workspace }}/build/static
         retention-days: 7
 
@@ -174,9 +174,15 @@ jobs:
         with:
           path: ${{ github.workspace }}/lstgext
 
-      - name: Rezip artifacts
+      - name: Organize and rezip artifacts
         run: |
           cd ${{ github.workspace }}/lstgext/
+          for a in */
+            a_=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
+            mkdir $a_
+            mv $a/* $a_
+            rm $a
+          done
           for a in */
             do zip -r "${a%/}.zip" "$a" &
           done
