@@ -86,7 +86,7 @@ set(HLSL_DISABLE_SOURCE_GENERATION TRUE)
 set(ENABLE_SPIRV_CODEGEN ON)
 
 include(${DXC_SOURCE_DIR}/cmake/caches/PredefinedParams.cmake)
-add_subdirectory(${DXC_SOURCE_DIR})
+add_subdirectory(${DXC_SOURCE_DIR} EXCLUDE_FROM_ALL)
 
 set(BUILD_SHARED_LIBS ${_BUILD_SHARED_LIBS})
 
