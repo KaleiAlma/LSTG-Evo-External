@@ -146,10 +146,12 @@ endif()
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     include(cmake/packages.shader.cmake)
     list(APPEND ExternalLibs
-        spirv-cross-util
         SDL3_shadercross::SDL3_shadercross
         glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
     )
+    if(LSTGEXT_BUILD_STATIC_LIBS)
+        list(APPEND ExternalLibs spirv-cross-util)
+    endif()
 endif()
 
 
