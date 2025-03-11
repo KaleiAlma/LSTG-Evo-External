@@ -132,9 +132,8 @@ jobs:
     - name: Fix SDL3 paths
       if: ${{ inputs.sdl3 }}
       run: |
-        ls ${{ github.workspace }}/build/SDL3-shared
-        # mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3 ${{ github.workspace }}/build/SDL3-shared
-        # mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3 ${{ github.workspace }}/build/SDL3-static
+        mv ${{ github.workspace }}/build/SDL3-shared/lstgext/* ${{ github.workspace }}/build/SDL3-shared/
+        mv ${{ github.workspace }}/build/SDL3-static/lstgext/* ${{ github.workspace }}/build/SDL3-static/
 
     - name: Configure and Build with CMake
       run: >
