@@ -125,6 +125,11 @@ include(${CPM_DOWNLOAD_LOCATION})
 # ==================== graphics ==================== #
 #====================================================#
 
+if(DEFINED LSTGEXT_SDL3_DIR)
+    include_directories(${LSTGEXT_SDL3_DIR}/include)
+    link_directories(${LSTGEXT_SDL3_DIR}/lib)
+endif()
+
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     include(cmake/packages.shader.cmake)
     list(APPEND ExternalLibs
@@ -133,15 +138,19 @@ if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     )
 endif()
 
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
 
 include(cmake/packages.gfx.cmake)
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SDL3)
+    list(APPEND ExternalLibs SDL3::SDL3)
+endif()
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
+
 list(APPEND ExternalLibs
-    SDL3::SDL3
     glm
     freetype
 )
-
 
 #===============================================#
 # ==================== lua ==================== #
@@ -336,7 +345,7 @@ endif()
 # ==================== prebuild target ==================== #
 #===========================================================#
 
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
     add_library(lstgext STATIC ${LSTG_EXTERNAL_SOURCES})
     lstgext_tgtopts_full(lstgext)
     target_compile_definitions(lstgext PUBLIC ${LSTG_EXTERNAL_DEFINES})
@@ -382,7 +391,7 @@ if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     list(APPEND ExternalBuild shadercross glslang-standalone)
 endif()
 
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
     list(APPEND ExternalBuild lstgext)
 endif()
 

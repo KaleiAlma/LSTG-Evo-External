@@ -1,7 +1,15 @@
-name: CMake on multiple platforms
+name: CMake on multiple platforms (base)
 
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      build:
+        required: true
+        type: string
+      sdl3:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -27,10 +35,6 @@ jobs:
             main_win: ARM64
             rev: armv8.2-a
             rev_win: armv8.2
-        build:
-          - shader
-          - zip
-          - misc
         exclude:
           - os: macos-14
             target_arch:
@@ -101,13 +105,27 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ github.workspace }}/build/cpm-cache
-        key: ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-${{ matrix.build }}-cpm-${{ hashFiles('**/') }}
+        key: ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-${{ inputs.build }}-cpm-${{ hashFiles('**/') }}
         restore-keys: |
-          ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-${{ matrix.build }}-cpm-
+          ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-${{ inputs.build }}-cpm-
 
     - name: Select MSVC if applicable
-      if: ${{ runner.os == 'Windows' && (matrix.build == 'minizip' || matrix.build == 'shader') }}
+      if: ${{ runner.os == 'Windows' && (inputs.build == 'zip' || inputs.build == 'shader') }}
       run: echo "LSTGEXT_MSVC=-msvc" >> "$env:GITHUB_ENV"
+
+    - name: Download previously-built SDL3 (shared)
+      if: ${{ inputs.sdl3 }}
+      uses: actions/download-artifact@v4
+      with:
+        path: ${{ github.workspace }}/build/SDL3-shared
+        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3
+
+    - name: Download previously-built SDL3 (static)
+      if: ${{ inputs.sdl3 }}
+      uses: actions/download-artifact@v4
+      with:
+        path: ${{ github.workspace }}/build/SDL3-static
+        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3
 
     - name: Configure and Build with CMake
       run: >
@@ -118,9 +136,10 @@ jobs:
         -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
         -DBUILD_SHARED_LIBS=ON
         -DLSTG_EXTERNAL_INSTALL_SUBDIR=shared/lstgext
-        -DLSTGEXT_BUILD=${{ matrix.build }}
+        -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
+        &{{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=${{ github.workspace }}/build/SDL3-shared' }}
         -G Ninja
         &&
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
@@ -138,9 +157,10 @@ jobs:
         -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
         -DBUILD_SHARED_LIBS=OFF
         -DLSTG_EXTERNAL_INSTALL_SUBDIR=static/lstgext
-        -DLSTGEXT_BUILD=${{ matrix.build }}
+        -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
+        &{{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=${{ github.workspace }}/build/SDL3-static' }}
         -G Ninja
         &&
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
@@ -151,7 +171,7 @@ jobs:
       id: archive-shared
       uses: actions/upload-artifact@v4
       with:
-        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-${{ matrix.build }}
+        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-${{ inputs.build }}
         path: ${{ github.workspace }}/build/shared
         retention-days: 7
 
@@ -159,39 +179,7 @@ jobs:
       id: archive-static
       uses: actions/upload-artifact@v4
       with:
-        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-${{ matrix.build }}
+        name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-${{ inputs.build }}
         path: ${{ github.workspace }}/build/static
         retention-days: 7
-
-
-  bundle-archives:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ${{ github.workspace }}/lstgext
-
-      - name: Organize and rezip artifacts
-        run: |
-          cd ${{ github.workspace }}/lstgext/
-          for a in */
-            a_=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
-            mkdir $a_
-            mv $a/* $a_
-            rm $a
-          done
-          for a in */
-            do zip -r "${a%/}.zip" "$a" &
-          done
-          wait
-
-      - name: Archive All
-        uses: actions/upload-artifact@v4
-        with:
-          name: lstgext-all
-          path: ${{ github.workspace }}/lstgext/*.zip
-          retention-days: 30
-
 

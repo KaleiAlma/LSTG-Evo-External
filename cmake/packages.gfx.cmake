@@ -1,38 +1,43 @@
 # sdl3
 
-CPMAddPackage(
-    NAME SDL3
-    GITHUB_REPOSITORY libsdl-org/SDL
-    GIT_TAG release-3.2.8
-    OPTIONS
-        "SDL_INSTALL ON"
-        "SDL_INSTALL_CPACK OFF"
-        "SDL_INSTALL_DOCS OFF"
-        "SDL_INSTALL_TESTS OFF"
-        "SDL_UNINSTALL OFF"
-        "SDL_TEST OFF"
-        "SDL_TEST_LIBRARY OFF"
-        "SDL_SHARED ${BUILD_SHARED_LIBS}"
-        "SDL_STATIC ${LSTGEXT_BUILD_STATIC_LIBS}"
-        "SDL_ASSEMBLY ON"
-        "SDL_MMX ${LSTG_x86_64}"
-        "SDL_SSE ${LSTG_x86_64}"
-        "SDL_SSE2 ${LSTG_x86_64}"
-        "SDL_SSE3 ${LSTG_SSE4_2}"
-        "SDL_SSE4_1 ${LSTG_SSE4_2}"
-        "SDL_SSE4_2 ${LSTG_SSE4_2}"
-        "SDL_AVX ${LSTG_AVX}"
-        "SDL_AVX2 ${LSTG_AVX2}"
-        "SDL_AVX512F ${LSTG_AVX512F}"
-        "SDL_RENDER OFF"
-)
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SDL3)
 
-if(BUILD_SHARED_LIBS)
-    lstgext_tgtopts_unicode(SDL3-shared)
-else()
-    lstgext_tgtopts_unicode(SDL3-static)
+    CPMAddPackage(
+        NAME SDL3
+        GITHUB_REPOSITORY libsdl-org/SDL
+        GIT_TAG release-3.2.8
+        OPTIONS
+            "SDL_INSTALL ON"
+            "SDL_INSTALL_CPACK OFF"
+            "SDL_INSTALL_DOCS OFF"
+            "SDL_INSTALL_TESTS OFF"
+            "SDL_UNINSTALL OFF"
+            "SDL_TEST OFF"
+            "SDL_TEST_LIBRARY OFF"
+            "SDL_SHARED ${BUILD_SHARED_LIBS}"
+            "SDL_STATIC ${LSTGEXT_BUILD_STATIC_LIBS}"
+            "SDL_ASSEMBLY ON"
+            "SDL_MMX ${LSTG_x86_64}"
+            "SDL_SSE ${LSTG_x86_64}"
+            "SDL_SSE2 ${LSTG_x86_64}"
+            "SDL_SSE3 ${LSTG_SSE4_2}"
+            "SDL_SSE4_1 ${LSTG_SSE4_2}"
+            "SDL_SSE4_2 ${LSTG_SSE4_2}"
+            "SDL_AVX ${LSTG_AVX}"
+            "SDL_AVX2 ${LSTG_AVX2}"
+            "SDL_AVX512F ${LSTG_AVX512F}"
+            "SDL_RENDER OFF"
+    )
+
+    if(BUILD_SHARED_LIBS)
+        lstgext_tgtopts_unicode(SDL3-shared)
+    else()
+        lstgext_tgtopts_unicode(SDL3-static)
+    endif()
+
 endif()
 
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
 
 # g-truc glm
 # OpenGL math library
@@ -103,3 +108,5 @@ endif()
 set_target_properties(freetype PROPERTIES FOLDER external)
 
 list(APPEND LSTG_EXTERNAL_ALL_INCDIRS ${freetype_SOURCE_DIR}/include/freetype)
+
+endif()
