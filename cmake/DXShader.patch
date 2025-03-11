@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..2d79811a 100644
+index 76a3078a..b51c01b6 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -55,7 +55,7 @@ index 76a3078a..2d79811a 100644
 -      set(build_type_flags "-DCMAKE_BUILD_TYPE=${buildtype}")
 +    if(LSTGEXT_GH AND WINDOWS AND NOT MINGW)
 +      execute_process(COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -command "
-+          setvc $ENV{RUNNER_ARCH} &&
++          Clear-VCVars && setvc AMD64 &&
 +          ${CMAKE_COMMAND} ${build_type_flags}
 +            -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
 +            -DLLVM_REQUIRES_EH=ON
