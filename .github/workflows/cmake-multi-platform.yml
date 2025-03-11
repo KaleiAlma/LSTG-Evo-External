@@ -14,10 +14,6 @@ on:
         required: false
         type: number
         default: 0
-      sdl3-gh-token:
-        required: false
-        type: string
-        default: ''
 
 jobs:
   build:
@@ -129,7 +125,7 @@ jobs:
       with:
         path: ${{ github.workspace }}/build/SDL3-shared
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3
-        github-token: ${{ inputs.sdl3-gh-token }}
+        github-token: ${{ secrets.SDL3_CACHE }}
         run-id: ${{ inputs.sdl3-run-id || github.run_id }}
 
     - name: Download previously-built SDL3 (static)
@@ -138,7 +134,7 @@ jobs:
       with:
         path: ${{ github.workspace }}/build/SDL3-static
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3
-        github-token: ${{ inputs.sdl3-gh-token }}
+        github-token: ${{ secrets.SDL3_CACHE }}
         run-id: ${{ inputs.sdl3-run-id || github.run_id }}
 
     - name: Fix SDL3 paths
