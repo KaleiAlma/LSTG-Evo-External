@@ -11,6 +11,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY KhronosGroup/SPIRV-Headers
     GIT_TAG 54a521dd130ae1b2f38fef79b09515702d135bdd
     GIT_SHALLOW ON
+    GIT_SUBMODULES ""
     GIT_SUBMODULES_RECURSE OFF
     OPTIONS
         "SPIRV_HEADERS_ENABLE_INSTALL ON"
@@ -21,6 +22,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY KhronosGroup/SPIRV-Tools
     GIT_TAG v2025.1.rc1
     GIT_SHALLOW ON
+    GIT_SUBMODULES ""
     GIT_SUBMODULES_RECURSE OFF
     OPTIONS
         "SPIRV_WERROR OFF"
@@ -43,6 +45,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY KhronosGroup/SPIRV-Cross
     GIT_TAG vulkan-sdk-1.4.304.1
     GIT_SHALLOW ON
+    GIT_SUBMODULES ""
     GIT_SUBMODULES_RECURSE OFF
     OPTIONS
         "SPIRV_CROSS_SHARED ${BUILD_SHARED_LIBS}"
@@ -51,17 +54,9 @@ CPMAddPackage(
         "SPIRV_CROSS_ENABLE_TESTS OFF"
         "SPIRV_CROSS_ENABLE_CPP OFF"
         "SPIRV_CROSS_ENABLE_REFLECT OFF"
-        "SPIRV_CROSS_ENABLE_C_API OFF"
+        "SPIRV_CROSS_ENABLE_C_API ON"
 )
-if(BUILD_SHARED_LIBS)
-    add_library(spirv_cross_c_shared ALIAS spirv-cross-c-shared)
-else()
-    add_library(spirv_cross_c ALIAS spirv-cross-c)
-    add_library(spirv_cross_core ALIAS spirv-cross-core)
-    add_library(spirv_cross_glsl ALIAS spirv-cross-glsl)
-    add_library(spirv_cross_hlsl ALIAS spirv-cross-hlsl)
-    add_library(spirv_cross_msl ALIAS spirv-cross-msl)
-endif()
+
 
 # directx shader compiler
 
@@ -70,6 +65,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY microsoft/DirectXShaderCompiler
     GIT_TAG v1.8.2502
     GIT_SHALLOW ON
+    GIT_SUBMODULES ""
     GIT_SUBMODULES_RECURSE OFF
     # OPTIONS
     #     "BUILD_SHARED_LIBS OFF"
@@ -98,14 +94,7 @@ add_subdirectory(${DXC_SOURCE_DIR} EXCLUDE_FROM_ALL)
 
 set(BUILD_SHARED_LIBS ${_BUILD_SHARED_LIBS})
 
-install(TARGETS dxcompiler dxildll EXPORT DirectXShaderCompiler)
-export(TARGETS dxcompiler dxildll FILE DirectXShaderCompiler.cmake)
-
-if(WIN32 AND NOT MINGW)
-    install(EXPORT DirectXShaderCompiler DESTINATION "${INSTALL_CMAKEDIR_ROOT}")
-else()
-    install(EXPORT DirectXShaderCompiler DESTINATION "${INSTALL_CMAKEDIR_ROOT}/DirectXShaderCompiler")
-endif()
+install(TARGETS dxcompiler dxildll)
 
 
 # sdl_shadercross
@@ -114,9 +103,10 @@ CPMAddPackage(
     NAME SDL_shadercross
     GITHUB_REPOSITORY libsdl-org/SDL_shadercross
     GIT_TAG 63026450dedbf7d8aeee99d9086719f425b2bb4d
+    GIT_SUBMODULES ""
     GIT_SUBMODULES_RECURSE OFF
     OPTIONS
-        "SDLSHADERCROSS_INSTALL ON"
+        "SDLSHADERCROSS_INSTALL OFF"
         "SDLSHADERCROSS_DXC ON"
         "SDLSHADERCROSS_SPIRVCROSS_SHARED ${BUILD_SHARED_LIBS}"
         "SDLSHADERCROSS_SHARED ${BUILD_SHARED_LIBS}"
@@ -127,8 +117,10 @@ CPMAddPackage(
 
 if(BUILD_SHARED_LIBS)
     lstgext_tgtopts_full(SDL3_shadercross-shared)
+    install(TARGETS SDL3_shadercross-shared)
 else()
     lstgext_tgtopts_full(SDL3_shadercross-static)
+    install(TARGETS SDL3_shadercross-static)
 endif()
 
 
@@ -139,6 +131,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY KhronosGroup/glslang
     GIT_TAG 15.1.0
     GIT_SHALLOW ON
+    GIT_SUBMODULES ""
     GIT_SUBMODULES_RECURSE OFF
     OPTIONS
         "BUILD_EXTERNAL OFF"

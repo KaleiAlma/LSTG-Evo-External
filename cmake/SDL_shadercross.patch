@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 36c7b28..e0b201c 100644
+index 36c7b28..16357f1 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -136,12 +136,12 @@ if(SDLSHADERCROSS_VENDORED)
@@ -34,3 +34,21 @@ index 36c7b28..e0b201c 100644
  	endif()
  endif()
  
+@@ -200,7 +206,7 @@ if(SDLSHADERCROSS_SHARED)
+ 	target_link_libraries(SDL3_shadercross-shared PRIVATE
+ 		SDL3::SDL3-shared
+ 	)
+-	export(TARGETS SDL3_shadercross-shared NAMESPACE "SDL3_shadercross::" FILE "SDL3_shadercross-shared-targets.cmake")
++	# export(TARGETS SDL3_shadercross-shared NAMESPACE "SDL3_shadercross::" FILE "SDL3_shadercross-shared-targets.cmake")
+ endif()
+ 
+ 
+@@ -224,7 +230,7 @@ if(SDLSHADERCROSS_STATIC)
+ 	target_link_libraries(SDL3_shadercross-static PUBLIC
+ 		SDL3::Headers
+ 	)
+-	export(TARGETS SDL3_shadercross-static NAMESPACE "SDL3_shadercross::" FILE "SDL3_shadercross-static-targets.cmake")
++	# export(TARGETS SDL3_shadercross-static NAMESPACE "SDL3_shadercross::" FILE "SDL3_shadercross-static-targets.cmake")
+ endif()
+ 
+ # Copy dependencies of SDL3_shadercross-config.cmake to build directory.
