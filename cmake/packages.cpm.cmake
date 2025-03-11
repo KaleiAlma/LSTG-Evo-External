@@ -92,6 +92,7 @@ CPMAddPackage(
     VERSION 0.8.1
     GITHUB_REPOSITORY Cyan4973/xxHash
     DOWNLOAD_ONLY YES
+    PATCHES "xxhash.patch"
 )
 
 list(APPEND LSTG_EXTERNAL_SOURCES ${xxhash_SOURCE_DIR}/xxhash.c)

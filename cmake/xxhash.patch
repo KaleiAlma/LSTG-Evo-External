@@ -1,0 +1,17 @@
+diff --git a/xxhash.h b/xxhash.h
+index 08ab794..8ab1d83 100644
+--- a/xxhash.h
++++ b/xxhash.h
+@@ -2715,7 +2715,11 @@ XXH_PUBLIC_API XXH64_hash_t XXH64_hashFromCanonical(const XXH64_canonical_t* src
+ #    include <emmintrin.h>
+ #  elif defined(__ARM_NEON__) || defined(__ARM_NEON)
+ #    define inline __inline__  /* circumvent a clang bug */
+-#    include <arm_neon.h>
++#    if defined(_MSC_VER) && (defined(_M_ARM64) || defined(_M_ARM64EC))
++#      include <arm64_neon.h> /* arm64_neon.h is MSVC specific */
++#    else
++#      include <arm_neon.h>
++#    endif
+ #    undef inline
+ #  endif
+ #elif defined(_MSC_VER)
