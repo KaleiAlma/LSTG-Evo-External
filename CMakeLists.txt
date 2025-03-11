@@ -297,8 +297,6 @@ list(APPEND LSTG_EXTERNAL_SOURCES
     xmath/xmath/meow_fft.c
     xmath/xmath/meow_fft.h
     xmath/xmath/XCollision.cpp
-    if()
-    
     xmath/xmath/XCollision.h
     xmath/xmath/XComplex.cpp
     xmath/xmath/XComplex.h
