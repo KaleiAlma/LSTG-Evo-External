@@ -163,6 +163,7 @@ jobs:
         cmake --install ${{ github.workspace }}/build
         &&
         cmake -B ${{ github.workspace }}/build
+        ${{ inputs.build == 'shader' && '--fresh' || '' }}
         -UBUILD_SHARED_LIBS
         -USDL_SHARED
         -USDL_STATIC
