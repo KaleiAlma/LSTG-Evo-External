@@ -21,6 +21,7 @@ CPMAddPackage(
         "SPIRV_SKIP_EXECUTABLES ON"
         "SKIP_SPIRV_TOOLS_INSTALL ON"
 )
+install(TARGETS SPIRV-Tools-opt EXPORT SPIRV-Tools)
 
 CPMAddPackage(
     NAME SPIRV-Cross
