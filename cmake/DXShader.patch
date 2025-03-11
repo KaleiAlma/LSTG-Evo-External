@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..b51c01b6 100644
+index 76a3078a..e9892ec6 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -8,70 +8,53 @@ index 76a3078a..b51c01b6 100644
  
    if(NOT DEFINED LLVM_${target_name}_BUILD)
      set(LLVM_${target_name}_BUILD "${CMAKE_BINARY_DIR}/${target_name}")
-@@ -16,13 +16,32 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -16,13 +16,18 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
      COMMAND ${CMAKE_COMMAND} -E make_directory ${LLVM_${target_name}_BUILD}
      COMMENT "Creating ${LLVM_${target_name}_BUILD}...")
  
--  add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
--    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
--        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_SOURCE_DIR}
--    WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
--    DEPENDS ${LLVM_${target_name}_BUILD}
--    COMMENT "Configuring ${target_name} LLVM...")
 +  if (buildtype)
 +    set(build_type_flags "-DCMAKE_BUILD_TYPE=${buildtype}")
 +  endif()
- 
-+  set(LSTGEXT_GH $ENV{GITHUB_ACTIONS})
-+  if(LSTGEXT_GH AND WINDOWS AND NOT MINGW)
-+    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
-+      COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -command "
-+        setvc $ENV{RUNNER_ARCH} &&
-+        ${CMAKE_COMMAND} ${build_type_flags}
-+          -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
-+          -DLLVM_REQUIRES_EH=ON
-+          ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}"
-+      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
-+      DEPENDS ${LLVM_${target_name}_BUILD}
-+      COMMENT "Configuring ${target_name} LLVM...")
-+  else()
-+    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
-+      COMMAND ${CMAKE_COMMAND} ${build_type_flags}
-+          -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
-+          -DLLVM_REQUIRES_EH=ON
-+          ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
-+      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
-+      DEPENDS ${LLVM_${target_name}_BUILD}
-+      COMMENT "Configuring ${target_name} LLVM...")
-+  endif()
++
+   add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
+-    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+-        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_SOURCE_DIR}
++    COMMAND ${CMAKE_COMMAND} ${build_type_flags}
++        -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
++        -DLLVM_REQUIRES_EH=ON
++        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
+     WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
+     DEPENDS ${LLVM_${target_name}_BUILD}
+     COMMENT "Configuring ${target_name} LLVM...")
+-
    add_custom_target(CONFIGURE_LLVM_${target_name}
                      DEPENDS ${LLVM_${target_name}_BUILD}/CMakeCache.txt)
  
-@@ -37,13 +56,21 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -30,20 +35,18 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+                                       ${LLVM_${target_name}_BUILD})
+ 
+   if(NOT IS_DIRECTORY ${LLVM_${target_name}_BUILD})
+-    
+ 
+     message(STATUS "Configuring ${target_name} build...")
+     execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
        ${LLVM_${target_name}_BUILD} )
  
-     message(STATUS "Configuring ${target_name} targets...")
+-    message(STATUS "Configuring ${target_name} targets...")
 -    if (buildtype)
 -      set(build_type_flags "-DCMAKE_BUILD_TYPE=${buildtype}")
-+    if(LSTGEXT_GH AND WINDOWS AND NOT MINGW)
-+      execute_process(COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -command "
-+          Clear-VCVars && setvc AMD64 &&
-+          ${CMAKE_COMMAND} ${build_type_flags}
-+            -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
-+            -DLLVM_REQUIRES_EH=ON
-+            ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}"
-+        WORKING_DIRECTORY ${LLVM_${target_name}_BUILD})
-+    else()
-+      execute_process(COMMAND ${CMAKE_COMMAND} ${build_type_flags}
-+            -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
-+            -DLLVM_REQUIRES_EH=ON
-+            ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
-+        WORKING_DIRECTORY ${LLVM_${target_name}_BUILD})
-     endif()
+-    endif()
 -    execute_process(COMMAND ${CMAKE_COMMAND} ${build_type_flags}
 -        -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
 -        ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_SOURCE_DIR}
 -      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD} )
++    # message(STATUS "Configuring ${target_name} targets...")
++    # execute_process(COMMAND ${CMAKE_COMMAND} ${build_type_flags}
++    #       -G "${CMAKE_GENERATOR}" -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}
++    #       -DLLVM_REQUIRES_EH=ON
++    #       ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
++    #   WORKING_DIRECTORY ${LLVM_${target_name}_BUILD})
++
    endif(NOT IS_DIRECTORY ${LLVM_${target_name}_BUILD})
  
  endfunction()
