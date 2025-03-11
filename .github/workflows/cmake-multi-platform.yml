@@ -167,6 +167,11 @@ jobs:
         -USDL_SHARED
         -USDL_STATIC
         -UTRACY_STATIC
+        -USPIRV_CROSS_SHARED
+        -USPIRV_CROSS_STATIC
+        -USDLSHADERCROSS_SPIRVCROSS_SHARED
+        -USDLSHADERCROSS_SHARED
+        -USDLSHADERCROSS_STATIC
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}${{ env.LSTGEXT_MSVC }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
