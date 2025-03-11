@@ -1,5 +1,5 @@
 diff --git a/xxhash.h b/xxhash.h
-index 08ab794..a2e245c 100644
+index 08ab794..4018c8a 100644
 --- a/xxhash.h
 +++ b/xxhash.h
 @@ -2713,7 +2713,7 @@ XXH_PUBLIC_API XXH64_hash_t XXH64_hashFromCanonical(const XXH64_canonical_t* src
@@ -7,7 +7,7 @@ index 08ab794..a2e245c 100644
  #  elif defined(__SSE2__)
  #    include <emmintrin.h>
 -#  elif defined(__ARM_NEON__) || defined(__ARM_NEON)
-+#  elif defined(__ARM_NEON__) || defined(__ARM_NEON) || defined(_M_ARM64) || defined(_M_ARM64EC) || defined(_M_ARM_ARMV7VE)
++#  elif defined(__ARM_NEON__) || defined(__ARM_NEON) || defined(_M_ARM64) || defined(_M_ARM64EC) || defined(_M_ARM_ARMV7VE) || defined(__aarch64__)
  #    define inline __inline__  /* circumvent a clang bug */
  #    include <arm_neon.h>
  #    undef inline
