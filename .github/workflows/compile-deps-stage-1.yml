@@ -1,0 +1,14 @@
+name: Compile LuaSTG Evo External Dependencies
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-sdl3:
+    uses: ./.github/workflows/cmake-multi-platform.yml
+    with:
+      build: sdl3
+  build-zip:
+    uses: ./.github/workflows/cmake-multi-platform.yml
+    with:
+      build: zip
