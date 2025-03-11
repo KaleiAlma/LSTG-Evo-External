@@ -77,7 +77,6 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: |
         choco install ninja
-        choco upgrade llvm
         Install-Module -Name VCVars -Confirm:$false -Force
         (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
         | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
@@ -91,6 +90,9 @@ jobs:
           $env:VCVARS_NATIVE += "$($_.Key)=$($val);"
         }
         "VCVARS_NATIVE=$($env:VCVARS_NATIVE)" >> "$env:GITHUB_ENV"
+    - name: Upgrade Windows LLVM
+      if: ${{ runner.os == 'Windows' && !(inputs.build == 'zip' || inputs.build == 'shader') }}
+      run: choco upgrade llvm
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@19 lld
@@ -139,7 +141,7 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
-        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=${{ github.workspace }}/build/SDL3-shared' }}
+        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-shared' }}
         -G Ninja
         &&
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
@@ -160,7 +162,7 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
-        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=${{ github.workspace }}/build/SDL3-static' }}
+        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-static' }}
         -G Ninja
         &&
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
