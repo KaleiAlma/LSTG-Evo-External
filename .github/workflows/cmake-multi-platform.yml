@@ -169,7 +169,7 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
-        ${{ (inputs.sdl3 && runner.os == 'Windows') && '-DLSTGEXT_SDL3_DIR=$env:GITHUB_WORKSPACE/build/SDL3-static' || '' }}
+        ${{ (inputs.sdl3 && runner.os == 'Windows') && '-DLSTGEXT_SDL3_DIR=$($env:GITHUB_WORKSPACE)/build/SDL3-static' || '' }}
         ${{ (inputs.sdl3 && runner.os != 'Windows') && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-static' || '' }}
         -G Ninja
         &&
