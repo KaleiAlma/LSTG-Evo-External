@@ -89,10 +89,9 @@ list(APPEND LSTG_PCG_BASEDIRS ${pcg_cpp_SOURCE_DIR}/include)
 
 CPMAddPackage(
     NAME xxhash
-    VERSION 0.8.1
+    VERSION 0.8.3
     GITHUB_REPOSITORY Cyan4973/xxHash
     DOWNLOAD_ONLY YES
-    PATCHES "xxhash.patch"
 )
 
 list(APPEND LSTG_EXTERNAL_SOURCES ${xxhash_SOURCE_DIR}/xxhash.c)
