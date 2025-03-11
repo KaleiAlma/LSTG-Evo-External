@@ -53,7 +53,15 @@ CPMAddPackage(
         "SPIRV_CROSS_ENABLE_REFLECT OFF"
         "SPIRV_CROSS_ENABLE_C_API OFF"
 )
-
+if(BUILD_SHARED_LIBS)
+    add_library(spirv_cross_c_shared ALIAS spirv-cross-c-shared)
+else()
+    add_library(spirv_cross_c ALIAS spirv-cross-c)
+    add_library(spirv_cross_core ALIAS spirv-cross-core)
+    add_library(spirv_cross_glsl ALIAS spirv-cross-glsl)
+    add_library(spirv_cross_hlsl ALIAS spirv-cross-hlsl)
+    add_library(spirv_cross_msl ALIAS spirv-cross-msl)
+endif()
 
 # directx shader compiler
 
