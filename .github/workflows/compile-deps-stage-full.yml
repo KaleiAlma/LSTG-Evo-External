@@ -8,6 +8,7 @@ jobs:
     uses: ./.github/workflows/cmake-multi-platform.yml
     with:
       build: sdl3
+      retention: 90
   build-main:
     uses: ./.github/workflows/cmake-multi-platform.yml
     needs: build-sdl3
@@ -24,6 +25,18 @@ jobs:
     uses: ./.github/workflows/cmake-multi-platform.yml
     with:
       build: zip
+
+  cache-sdl3:
+    runs-on: ubuntu-latest
+    needs: build-sdl3
+    steps:
+      - uses: octokit/request-action@v2.4.0
+        with:
+          route: POST /repos/${{ github.action_repository }}/actions/variables/
+          name: SDL3_RUN_ID
+          value: ${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.SDL3_CACHER }}
 
   bundle-archives:
     runs-on: ubuntu-latest

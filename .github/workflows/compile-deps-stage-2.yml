@@ -25,7 +25,14 @@ jobs:
       - build-main
       - build-shader
     steps:
-      - name: Download all workflow run artifacts
+      - name: Download all Stage 1 workflow run artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ github.workspace }}/lstgext
+          github-token: ${{ secrets.SDL3_CACHE }}
+          run-id: ${{ vars.SDL3_RUN_ID }}
+
+      - name: Download all Stage 2 workflow run artifacts
         uses: actions/download-artifact@v4
         with:
           path: ${{ github.workspace }}/lstgext
