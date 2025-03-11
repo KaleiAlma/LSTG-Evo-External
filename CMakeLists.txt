@@ -63,8 +63,11 @@ option(BUILD_SHARED_LIBS "" ON)
 
 if(NOT BUILD_SHARED_LIBS)
     set(LSTGEXT_BUILD_STATIC_LIBS ON)
+    set(LSTGEXT_LIBTYPE STATIC)
     message("== [ Building static libraries ] ==")
 else()
+    set(LSTGEXT_BUILD_STATIC_LIBS OFF)
+    set(LSTGEXT_LIBTYPE SHARED)
     message("== [ Building shared libraries ] ==")
 endif()
 
@@ -87,6 +90,13 @@ set(LSTG_PCG_BASEDIRS)
 set(LSTG_STB_HEADERS)
 set(LSTG_STB_BASEDIRS)
 
+if(NOT DEFINED LSTGEXT_BUILD)
+    set(LSTGEXT_BUILD_ALL ON)
+else()
+    string(TOUPPER ${LSTGEXT_BUILD} LSTGEXT_BUILD)
+
+    set(LSTGEXT_BUILD_${LSTGEXT_BUILD} ON)
+endif()
 
 # ==================== cpm ====================
 
@@ -111,19 +121,40 @@ endif()
 include(${CPM_DOWNLOAD_LOCATION})
 
 
+#====================================================#
+# ==================== graphics ==================== #
+#====================================================#
+
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_GFX)
+    include(cmake/packages.gfx.cmake)
+    list(APPEND ExternalLibs
+        SDL3::SDL3
+        glm
+        freetype
+    )
+endif()
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
+    include(cmake/packages.shader.cmake)
+    list(APPEND ExternalLibs
+        SDL3_shadercross::SDL3_shadercross
+        glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
+    )
+endif()
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
+
 #===============================================#
 # ==================== lua ==================== #
 #===============================================#
 
 include(cmake/packages.lua.cmake)
 
-
-#====================================================#
-# ==================== graphics ==================== #
-#====================================================#
-
-include(cmake/packages.gfx.cmake)
-
+list(APPEND ExternalLibs
+    luajit-static
+    sol2
+)
 
 #=================================================#
 # ==================== imgui ==================== #
@@ -246,7 +277,12 @@ list(APPEND LSTG_EXTERNAL_DEFINES MA_IMPLEMENTATION MA_USE_STDINT)
 #================================================#
 
 include(cmake/packages.cpm.cmake)
-include(cmake/packages.z.cmake)
+list(APPEND ExternalLibs
+    TracyClient
+    nlohmann_json
+    spdlog
+    uni-algo
+)
 
 
 # ==================== xmath ====================
@@ -261,6 +297,8 @@ list(APPEND LSTG_EXTERNAL_SOURCES
     xmath/xmath/meow_fft.c
     xmath/xmath/meow_fft.h
     xmath/xmath/XCollision.cpp
+    if()
+    
     xmath/xmath/XCollision.h
     xmath/xmath/XComplex.cpp
     xmath/xmath/XComplex.h
@@ -282,70 +320,77 @@ list(APPEND LSTG_EXTERNAL_SOURCES
     xmath/xmath/XTween.h
 )
 
+list(APPEND ExternalLibs xmath)
+
+
+endif()
+
+
+# ==================== minizip ====================
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_ZIP)
+    include(cmake/packages.z.cmake)
+
+    list(APPEND ExternalLibs
+        minizip
+    )
+endif()
 
 #===========================================================#
 # ==================== prebuild target ==================== #
 #===========================================================#
 
-set(ExternalLibs
-    luajit-static
-    sol2
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
+    add_library(lstgext STATIC ${LSTG_EXTERNAL_SOURCES})
+    lstgext_tgtopts_full(lstgext)
+    target_compile_definitions(lstgext PUBLIC ${LSTG_EXTERNAL_DEFINES})
 
-    SDL3::SDL3
-    SDL3_shadercross::SDL3_shadercross
-    glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
-    glm
-    freetype
+    target_sources(lstgext INTERFACE
+        FILE_SET public_header TYPE HEADERS
+            BASE_DIRS ${LSTG_EXTERNAL_INCDIRS}
+            FILES ${LSTG_EXTERNAL_HEADERS}
+        FILE_SET imgui_header TYPE HEADERS
+            BASE_DIRS ${LSTG_IMGUI_BASEDIRS}
+            FILES ${LSTG_IMGUI_HEADERS}
+        FILE_SET pcg_header TYPE HEADERS
+            BASE_DIRS ${LSTG_PCG_BASEDIRS}
+            FILES ${LSTG_PCG_HEADERS}
+        FILE_SET stb_header TYPE HEADERS
+            BASE_DIRS ${LSTG_STB_BASEDIRS}
+            FILES ${LSTG_STB_HEADERS}
+    )
 
-    xmath
-    TracyClient
-    nlohmann_json
-    spdlog
-    uni-algo
-    minizip
-)
+    set(LSTG_EXTERNAL_INCDIRS_FULL ${LSTG_EXTERNAL_INCDIRS}
+        ${LSTG_IMGUI_BASEDIRS}
+        ${LSTG_PCG_BASEDIRS}
+        ${LSTG_STB_BASEDIRS}
+    )
+    target_include_directories(lstgext PUBLIC
+        ${LSTG_EXTERNAL_INCDIRS_FULL}
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    )
 
-add_library(lstgext STATIC ${LSTG_EXTERNAL_SOURCES})
-lstgext_tgtopts_full(lstgext)
-target_compile_definitions(lstgext PUBLIC ${LSTG_EXTERNAL_DEFINES})
+    target_link_libraries(lstgext PUBLIC ${ExternalLibs})
 
-target_sources(lstgext INTERFACE
-    FILE_SET public_header TYPE HEADERS
-        BASE_DIRS ${LSTG_EXTERNAL_INCDIRS}
-        FILES ${LSTG_EXTERNAL_HEADERS}
-    FILE_SET imgui_header TYPE HEADERS
-        BASE_DIRS ${LSTG_IMGUI_BASEDIRS}
-        FILES ${LSTG_IMGUI_HEADERS}
-    FILE_SET pcg_header TYPE HEADERS
-        BASE_DIRS ${LSTG_PCG_BASEDIRS}
-        FILES ${LSTG_PCG_HEADERS}
-    FILE_SET stb_header TYPE HEADERS
-        BASE_DIRS ${LSTG_STB_BASEDIRS}
-        FILES ${LSTG_STB_HEADERS}
-)
+    install(TARGETS lstgext
+        FILE_SET public_header
+        FILE_SET imgui_header DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/imgui
+        FILE_SET pcg_header DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/pcg
+        FILE_SET stb_header DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stb
+    )
+endif()
 
-set(LSTG_EXTERNAL_INCDIRS_FULL ${LSTG_EXTERNAL_INCDIRS}
-    ${LSTG_IMGUI_BASEDIRS}
-    ${LSTG_PCG_BASEDIRS}
-    ${LSTG_STB_BASEDIRS}
-)
-target_include_directories(lstgext PUBLIC
-    ${LSTG_EXTERNAL_INCDIRS_FULL}
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
+set(ExternalBuild ${ExternalLibs})
 
-target_link_libraries(lstgext PUBLIC ${ExternalLibs})
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
+    list(APPEND ExternalBuild shadercross glslang-standalone)
+endif()
 
-add_custom_target(external-build
-    DEPENDS ${ExternalLibs} shadercross glslang-standalone lstgext
-)
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MISC)
+    list(APPEND ExternalBuild lstgext)
+endif()
 
-install(TARGETS lstgext
-    FILE_SET public_header
-    FILE_SET imgui_header DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/imgui
-    FILE_SET pcg_header DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/pcg
-    FILE_SET stb_header DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/stb
-)
+add_custom_target(external-build DEPENDS ${ExternalBuild})
 
 add_custom_target(zip-install
     DEPENDS external-build install

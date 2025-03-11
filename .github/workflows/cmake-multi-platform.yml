@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      LSTGEXT_MSVC:
 
     strategy:
       fail-fast: false
@@ -25,6 +27,11 @@ jobs:
             main_win: ARM64
             rev: armv8.2-a
             rev_win: armv8.2
+        build:
+          - shader
+          - zip
+          - gfx
+          - misc
         exclude:
           - os: macos-14
             target_arch:
@@ -98,16 +105,21 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-cpm-${{ hashFiles('**/') }}
         restore-keys: |
           ${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev }}-cpm-
-            
+
+    - name: Select MSVC if applicable
+      if: ${{ runner.os == 'Windows' && (matrix.build == 'minizip' || matrix.build == 'shader') }}
+      run: echo "LSTGEXT_MSVC=-msvc" >> "$env:GITHUB_ENV"
+
     - name: Configure and Build with CMake
       run: >
         cmake -B ${{ github.workspace }}/build
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}${{ env.LSTGEXT_MSVC }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
         -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
         -DBUILD_SHARED_LIBS=ON
         -DLSTG_EXTERNAL_INSTALL_SUBDIR=shared/lstgext
+        -DLSTGEXT_BUILD=${{ matrix.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja
@@ -121,12 +133,13 @@ jobs:
         -USDL_SHARED
         -USDL_STATIC
         -UTRACY_STATIC
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}.cmake
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}${{ env.LSTGEXT_MSVC }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
         -DTARGET_ARCH_REV_WIN="${{ matrix.target_arch.rev_win }}"
         -DBUILD_SHARED_LIBS=OFF
         -DLSTG_EXTERNAL_INSTALL_SUBDIR=static/lstgext
+        -DLSTGEXT_BUILD=${{ matrix.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         -G Ninja

@@ -34,48 +34,6 @@ else()
 endif()
 
 
-# sdl_shadercross
-
-if(WIN32 AND NOT MINGW)
-    include_directories("$ENV{VSINSTALLDIR}\\DIA SDK\\include\\")
-endif()
-
-CPMAddPackage(
-    NAME SDL_shadercross
-    GITHUB_REPOSITORY libsdl-org/SDL_shadercross
-    GIT_TAG db758697661c59718ae02786d667d24f94d3c88b
-    PATCHES "DXShader.patch"
-    OPTIONS
-        "SDLSHADERCROSS_INSTALL ON"
-        "SDLSHADERCROSS_DXC ON"
-        "SDLSHADERCROSS_SPIRVCROSS_SHARED ${BUILD_SHARED_LIBS}"
-        "SDLSHADERCROSS_SHARED ${BUILD_SHARED_LIBS}"
-        "SDLSHADERCROSS_STATIC ${LSTGEXT_BUILD_STATIC_LIBS}"
-        "SDLSHADERCROSS_VENDORED ON"
-        "SPIRV_WERROR OFF"
-)
-
-if(BUILD_SHARED_LIBS)
-    lstgext_tgtopts_full(SDL3_shadercross-shared)
-else()
-    lstgext_tgtopts_full(SDL3_shadercross-static)
-endif()
-
-
-# glslang
-
-CPMAddPackage(
-    NAME glslang
-    GITHUB_REPOSITORY KhronosGroup/glslang
-    GIT_TAG 15.1.0
-    OPTIONS
-        "BUILD_EXTERNAL OFF"
-        "ENABLE_GLSLANG_JS OFF"
-        "ENABLE_SPVREMAPPER OFF"
-        "GLSLANG_ENABLE_INSTALL ON"
-)
-
-
 # g-truc glm
 # OpenGL math library
 

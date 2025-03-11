@@ -1,0 +1,39 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e987f0c..e6e5171 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -133,12 +133,12 @@ if(SDLSHADERCROSS_VENDORED)
+ 	export(TARGETS ${vendored_targets} NAMESPACE "SDL3_shadercross::" FILE "SDL3_shadercross-vendored-targets.cmake")
+ else()
+ 	if(SDLSHADERCROSS_SPIRVCROSS_SHARED)
+-		if(NOT TARGET spirv_cross_c_shared)
++		if(NOT TARGET spirv-cross-c-shared)
+ 			find_package(spirv_cross_c_shared REQUIRED)
+ 		endif()
+ 	else()
+ 		enable_language(CXX)
+-		if(NOT TARGET spirv_cross_c)
++		if(NOT TARGET spirv-cross-c)
+ 			find_package(spirv_cross_core QUIET)
+ 			find_package(spirv_cross_glsl QUIET)
+ 			find_package(spirv_cross_hlsl QUIET)
+@@ -150,8 +150,17 @@ else()
+ 	endif()
+ 
+ 	if(SDLSHADERCROSS_DXC)
+-		set(DirectXShaderCompiler_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/DirectXShaderCompiler-binaries")
+-		find_package(DirectXShaderCompiler REQUIRED)
++		if(NOT TARGET dxcompiler)
++			set(DirectXShaderCompiler_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/DirectXShaderCompiler-binaries")
++			find_package(DirectXShaderCompiler REQUIRED)
++		else()
++			add_library(DirectXShaderCompiler::dxcompiler ALIAS dxcompiler)
++			add_library(DirectXShaderCompiler::dxil ALIAS dxildll)
++			list(APPEND vendored_targets dxcompiler dxildll)
++			add_dependencies(dxcompiler dxildll)
++
++			export(TARGETS ${vendored_targets} NAMESPACE "SDL3_shadercross::" FILE "SDL3_shadercross-vendored-targets.cmake")
++		endif()
+ 	endif()
+ endif()
+ 
