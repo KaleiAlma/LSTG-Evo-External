@@ -154,18 +154,6 @@ jobs:
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-shared' || '' }}
         -G Ninja
 
-    - name: Configure and Build Native LLVM (Windows)
-      if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader' }}
-      run: >
-        setvc (vcvars) &&
-        cmake -B ${{ github.workspace }}/build/NATIVE
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/Windows-x86_64-msvc.cmake
-        -DCMAKE_BUILD_TYPE=Release
-        -S ${{ github.workspace }}/build/_deps/dxc-src
-        -G Ninja
-        && cmake --build ${{ github.workspace }}/build/NATIVE --config Release --target clang-tblgen
-        && cmake --build ${{ github.workspace }}/build/NATIVE --config Release --target llvm-tblgen
-
     - name: Build With CMake (Shared)
       run: >
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
