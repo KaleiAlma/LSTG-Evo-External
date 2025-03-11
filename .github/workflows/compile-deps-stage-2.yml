@@ -10,12 +10,14 @@ jobs:
       build: main
       sdl3: true
       sdl3-run-id: ${{ fromJson(vars.SDL3_RUN_ID) }}
+      sdl3-gh-token: ${{ secrets.SDL3_CACHE }}
   build-shader:
     uses: ./.github/workflows/cmake-multi-platform.yml
     with:
       build: shader
       sdl3: true
       sdl3-run-id: ${{ fromJson(vars.SDL3_RUN_ID) }}
+      sdl3-gh-token: ${{ secrets.SDL3_CACHE }}
 
   bundle-archives:
     runs-on: ubuntu-latest
