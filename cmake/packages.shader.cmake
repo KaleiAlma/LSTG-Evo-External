@@ -1,3 +1,9 @@
+if(WIN32 AND NOT MINGW)
+    set(INSTALL_CMAKEDIR_ROOT "cmake")
+else()
+    set(INSTALL_CMAKEDIR_ROOT "${CMAKE_INSTALL_LIBDIR}/cmake")
+endif()
+
 # spir-v
 
 CPMAddPackage(
@@ -20,8 +26,17 @@ CPMAddPackage(
         "SPIRV_WERROR OFF"
         "SPIRV_SKIP_EXECUTABLES ON"
         "SKIP_SPIRV_TOOLS_INSTALL ON"
+        "SPIRV_TOOLS_BUILD_STATIC ON"
 )
-install(TARGETS SPIRV-Tools-opt EXPORT SPIRV-Tools)
+
+install(TARGETS SPIRV-Tools-opt SPIRV-Tools-static EXPORT SPIRV-Tools)
+export(TARGETS SPIRV-Tools-opt SPIRV-Tools-static FILE SPIRV-Tools.cmake)
+
+if(WIN32 AND NOT MINGW)
+    install(EXPORT SPIRV-Tools DESTINATION "${INSTALL_CMAKEDIR_ROOT}")
+else()
+    install(EXPORT SPIRV-Tools DESTINATION "${INSTALL_CMAKEDIR_ROOT}/SPIRV-Tools")
+endif()
 
 CPMAddPackage(
     NAME SPIRV-Cross
@@ -74,6 +89,15 @@ include(${DXC_SOURCE_DIR}/cmake/caches/PredefinedParams.cmake)
 add_subdirectory(${DXC_SOURCE_DIR})
 
 set(BUILD_SHARED_LIBS ${_BUILD_SHARED_LIBS})
+
+install(TARGETS dxcompiler dxildll EXPORT DirectXShaderCompiler)
+export(TARGETS dxcompiler dxildll FILE DirectXShaderCompiler.cmake)
+
+if(WIN32 AND NOT MINGW)
+    install(EXPORT DirectXShaderCompiler DESTINATION "${INSTALL_CMAKEDIR_ROOT}")
+else()
+    install(EXPORT DirectXShaderCompiler DESTINATION "${INSTALL_CMAKEDIR_ROOT}/DirectXShaderCompiler")
+endif()
 
 
 # sdl_shadercross

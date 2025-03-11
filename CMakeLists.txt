@@ -98,6 +98,8 @@ else()
     set(LSTGEXT_BUILD_${LSTGEXT_BUILD} ON)
 endif()
 
+message("BUILD: ${LSTGEXT_BUILD_ALL}")
+
 # ==================== cpm ====================
 
 set(CPM_DOWNLOAD_VERSION 0.40.0)
@@ -129,8 +131,18 @@ if(DEFINED LSTGEXT_SDL3_DIR)
     set(LSTGEXT_SDL3_DIR ${CMAKE_BINARY_DIR}/${LSTGEXT_SDL3_DIR})
     include_directories(${LSTGEXT_SDL3_DIR}/include)
     link_directories(${LSTGEXT_SDL3_DIR}/lib)
-    set(SDL3_DIR ${LSTGEXT_SDL3_DIR}/lib/cmake/SDL3/)
-    include(${LSTGEXT_SDL3_DIR}/lib/cmake/SDL3/SDL3Config.cmake)
+    if(WIN32 AND NOT MINGW)
+        set(SDL3_DIR ${LSTGEXT_SDL3_DIR}/cmake/)
+    else()
+        set(SDL3_DIR ${LSTGEXT_SDL3_DIR}/lib/cmake/SDL3/)
+    endif()
+    include(${SDL3_DIR}/SDL3Config.cmake)
+endif()
+
+include(cmake/packages.gfx.cmake)
+
+if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SDL3)
+    list(APPEND ExternalLibs SDL3::SDL3)
 endif()
 
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
@@ -141,12 +153,6 @@ if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
     )
 endif()
 
-
-include(cmake/packages.gfx.cmake)
-
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SDL3)
-    list(APPEND ExternalLibs SDL3::SDL3)
-endif()
 
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
 
