@@ -69,7 +69,7 @@ jobs:
         echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main" | sudo tee -a /etc/apt/sources.list > /dev/null
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo apt update
-        sudo apt install cmake llvm-19 clang-19 lld-19 \
+        sudo apt install cmake llvm-19 clang-19 lld-19 clang-tools-19 \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
           libpipewire-0.3-dev libaudio-dev libjack-dev libsndio-dev \
           libasound2-dev libpulse-dev libpulse-mainloop-glib0 libglib2.0-dev libxkbcommon-dev
@@ -119,15 +119,22 @@ jobs:
       if: ${{ inputs.sdl3 }}
       uses: actions/download-artifact@v4
       with:
-        path: ${{ github.workspace }}/build/SDL3-shared
+        path: ${{ github.workspace }}/build/
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3
 
     - name: Download previously-built SDL3 (static)
       if: ${{ inputs.sdl3 }}
       uses: actions/download-artifact@v4
       with:
-        path: ${{ github.workspace }}/build/SDL3-static
+        path: ${{ github.workspace }}/build/
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3
+
+
+    - name: Fix SDL3 paths
+      if: ${{ inputs.sdl3 }}
+      run: |
+        mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3 ${{ github.workspace }}/build/SDL3-shared
+        mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3 ${{ github.workspace }}/build/SDL3-static
 
     - name: Configure and Build with CMake
       run: >
@@ -141,7 +148,7 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
-        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-shared' }}
+        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-shared' || '' }}
         -G Ninja
         &&
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
@@ -162,7 +169,7 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
-        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-static' }}
+        ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=$GITHUB_WORKSPACE/build/SDL3-static' || '' }}
         -G Ninja
         &&
         cmake --build ${{ github.workspace }}/build --config Release --target external-build
