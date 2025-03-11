@@ -126,6 +126,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 #====================================================#
 
 if(DEFINED LSTGEXT_SDL3_DIR)
+    set(LSTGEXT_SDL3_DIR ${CMAKE_BINARY_DIR}/${LSTGEXT_SDL3_DIR})
     include_directories(${LSTGEXT_SDL3_DIR}/include)
     link_directories(${LSTGEXT_SDL3_DIR}/lib)
     set(SDL3_DIR ${LSTGEXT_SDL3_DIR}/lib/cmake/SDL3/)
