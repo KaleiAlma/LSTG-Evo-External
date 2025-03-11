@@ -1,4 +1,4 @@
-name: Compile LuaSTG Evo External Dependencies
+name: Compile LuaSTG Evo External Dependencies (All)
 
 on:
   workflow_dispatch:
