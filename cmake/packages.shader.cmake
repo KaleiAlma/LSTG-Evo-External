@@ -19,6 +19,7 @@ CPMAddPackage(
     OPTIONS
         "SPIRV_WERROR OFF"
         "SPIRV_SKIP_EXECUTABLES ON"
+        "SKIP_SPIRV_TOOLS_INSTALL ON"
 )
 
 CPMAddPackage(
