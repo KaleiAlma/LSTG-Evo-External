@@ -119,22 +119,22 @@ jobs:
       if: ${{ inputs.sdl3 }}
       uses: actions/download-artifact@v4
       with:
-        path: ${{ github.workspace }}/build/
+        path: ${{ github.workspace }}/build/SDL3-shared
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3
 
     - name: Download previously-built SDL3 (static)
       if: ${{ inputs.sdl3 }}
       uses: actions/download-artifact@v4
       with:
-        path: ${{ github.workspace }}/build/
+        path: ${{ github.workspace }}/build/SDL3-static
         name: lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3
-
 
     - name: Fix SDL3 paths
       if: ${{ inputs.sdl3 }}
       run: |
-        mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3 ${{ github.workspace }}/build/SDL3-shared
-        mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3 ${{ github.workspace }}/build/SDL3-static
+        ls ${{ github.workspace }}/build/SDL3-shared
+        # mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-shared-sdl3 ${{ github.workspace }}/build/SDL3-shared
+        # mv ${{ github.workspace }}/build/lstgext-${{ runner.os }}-${{ matrix.target_arch.main }}-${{ matrix.target_arch.rev_win }}-static-sdl3 ${{ github.workspace }}/build/SDL3-static
 
     - name: Configure and Build with CMake
       run: >
