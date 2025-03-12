@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..543da10d 100644
+index 76a3078a..f9c86a57 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -8,7 +8,7 @@ index 76a3078a..543da10d 100644
  
    if(NOT DEFINED LLVM_${target_name}_BUILD)
      set(LLVM_${target_name}_BUILD "${CMAKE_BINARY_DIR}/${target_name}")
-@@ -16,13 +16,36 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -16,13 +16,38 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
      COMMAND ${CMAKE_COMMAND} -E make_directory ${LLVM_${target_name}_BUILD}
      COMMENT "Creating ${LLVM_${target_name}_BUILD}...")
  
@@ -31,7 +31,9 @@ index 76a3078a..543da10d 100644
 +$env:LIB = '';
 +$env:LIBPATH = '';
 +$env:CommandPromptType = '';
-+setvc (vcvars);
++$e = (vcvars);
++echo $e;
++setvc ($e);
 +& '${CMAKE_COMMAND}' ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
 +}"
 +      VERBATIM
@@ -51,7 +53,7 @@ index 76a3078a..543da10d 100644
    add_custom_target(CONFIGURE_LLVM_${target_name}
                      DEPENDS ${LLVM_${target_name}_BUILD}/CMakeCache.txt)
  
-@@ -37,13 +60,25 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -37,13 +62,27 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
        ${LLVM_${target_name}_BUILD} )
  
      message(STATUS "Configuring ${target_name} targets...")
@@ -64,7 +66,9 @@ index 76a3078a..543da10d 100644
 +$env:LIB = ''
 +$env:LIBPATH = ''
 +$env:CommandPromptType = ''
-+setvc (vcvars)
++$e = (vcvars)
++echo $e
++setvc ($e)
 +& '${CMAKE_COMMAND}' ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
 +}"
 +        COMMAND_ECHO STDOUT
