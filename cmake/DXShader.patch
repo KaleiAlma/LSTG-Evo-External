@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..d3428915 100644
+index 76a3078a..64877f0b 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -8,7 +8,7 @@ index 76a3078a..d3428915 100644
  
    if(NOT DEFINED LLVM_${target_name}_BUILD)
      set(LLVM_${target_name}_BUILD "${CMAKE_BINARY_DIR}/${target_name}")
-@@ -16,13 +16,29 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -16,13 +16,32 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
      COMMAND ${CMAKE_COMMAND} -E make_directory ${LLVM_${target_name}_BUILD}
      COMMENT "Creating ${LLVM_${target_name}_BUILD}...")
  
@@ -26,7 +26,10 @@ index 76a3078a..d3428915 100644
  
 +  if(LSTGEXT_GH AND WIN32 AND NOT MINGW)
 +    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
-+      COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "setvc (vcvars)\; \"${CMAKE_COMMAND}\" --% \"${build_type_flags}\" \"-G\" \"${CMAKE_GENERATOR}\" \"-DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}\" \"-DLLVM_REQUIRES_EH=ON\" ${CROSS_TOOLCHAIN_FLAGS_${target_name}} \"${CMAKE_CURRENT_SOURCE_DIR}\""
++      COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "& {
++setvc (vcvars)
++'${CMAKE_COMMAND}' --% ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
++}"
 +      VERBATIM
 +      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
 +      DEPENDS ${LLVM_${target_name}_BUILD}
@@ -44,7 +47,7 @@ index 76a3078a..d3428915 100644
    add_custom_target(CONFIGURE_LLVM_${target_name}
                      DEPENDS ${LLVM_${target_name}_BUILD}/CMakeCache.txt)
  
-@@ -37,13 +53,17 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
+@@ -37,13 +56,21 @@ function(llvm_create_cross_target_internal target_name toochain buildtype)
        ${LLVM_${target_name}_BUILD} )
  
      message(STATUS "Configuring ${target_name} targets...")
@@ -52,7 +55,11 @@ index 76a3078a..d3428915 100644
 -      set(build_type_flags "-DCMAKE_BUILD_TYPE=${buildtype}")
 +    if(LSTGEXT_GH AND WIN32 AND NOT MINGW)
 +      execute_process(
-+        COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "setvc (vcvars)\; \"${CMAKE_COMMAND}\" --% \"${build_type_flags}\" \"-G\" \"${CMAKE_GENERATOR}\" \"-DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}\" \"-DLLVM_REQUIRES_EH=ON\" ${CROSS_TOOLCHAIN_FLAGS_${target_name}} \"${CMAKE_CURRENT_SOURCE_DIR}\""
++        COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "& {
++setvc (vcvars)
++'${CMAKE_COMMAND}' --% ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
++}"
++        COMMAND_ECHO STDOUT
 +        WORKING_DIRECTORY ${LLVM_${target_name}_BUILD})
 +    else()
 +      execute_process(COMMAND ${CMAKE_COMMAND} ${build_type_flags}
