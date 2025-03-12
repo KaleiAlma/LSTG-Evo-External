@@ -140,13 +140,12 @@ jobs:
       if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader' }}
       run: |
         setvc (vcvars)
-        cd ${{ github.workspace }}/build/
-        git clone --depth=1 -b v1.8.2502 https://github.com/microsoft/DirectXShaderCompiler dxc-src
-        mkdir NATIVE
-        cmake -S dxc-src -B NATIVE -C dxc-src/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
-        cmake --build NATIVE --target llvm-tblgen --config Release
-        cmake --build NATIVE --target clang-tblgen --config Release
-        "TBLGEN_DIR=${{ github.workspace }}/build/NATIVE/bin/" >> "$env:GITHUB_ENV"
+        $b = ${{ github.workspace }}/build
+        $dxc = $b/cpm-cache/((ls -ad $b/cpm-cache/)[0])/dxc
+        cmake -S $dxc -B $b/NATIVE -C $dxc/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake --build $b/NATIVE --target llvm-tblgen --config Release
+        cmake --build $b/NATIVE --target clang-tblgen --config Release
+        "TBLGEN_DIR=$b/NATIVE/bin/" >> "$env:GITHUB_ENV"
 
     - name: Set Windows VCVars
       if: ${{ runner.os == 'Windows' }}
@@ -156,7 +155,7 @@ jobs:
 
     - name: Configure CMake (Shared)
       run: >
-        cmake -B ${{ github.workspace }}/build
+        cmake -B ${{ github.workspace }}/build -S ${{ github.workspace }}
         -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/cmake/toolchain/${{ runner.os }}-${{ matrix.target_arch.main }}${{ env.LSTGEXT_MSVC }}.cmake
         -DCMAKE_BUILD_TYPE=Release
         -DTARGET_ARCH_REV="${{ matrix.target_arch.rev }}"
@@ -164,7 +163,6 @@ jobs:
         -DBUILD_SHARED_LIBS=ON
         -DLSTG_EXTERNAL_INSTALL_SUBDIR=shared/lstgext
         -DLSTGEXT_BUILD=${{ inputs.build }}
-        -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-shared' || '' }}
         ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DLLVM_TABLEGEN={0}/llvm-tblgen.exe', env.TBLGEN_DIR) || '' }}
@@ -187,7 +185,7 @@ jobs:
 
     - name: Configure CMake (Static)
       run: >
-        cmake -B ${{ github.workspace }}/build
+        cmake -B ${{ github.workspace }}/build -S ${{ github.workspace }}
         -USDL_SHARED
         -USDL_STATIC
         -UTRACY_STATIC
@@ -203,7 +201,6 @@ jobs:
         -DBUILD_SHARED_LIBS=OFF
         -DLSTG_EXTERNAL_INSTALL_SUBDIR=static/lstgext
         -DLSTGEXT_BUILD=${{ inputs.build }}
-        -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-static' || '' }}
         ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DLLVM_TABLEGEN={0}/llvm-tblgen.exe', env.TBLGEN_DIR) || '' }}
