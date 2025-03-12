@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..ecc7a0b7 100644
+index 76a3078a..df71bdf2 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -28,7 +28,7 @@ index 76a3078a..ecc7a0b7 100644
 +    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
 +      COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "& {
 +setvc (vcvars);
-+'${CMAKE_COMMAND}' --% ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
++& '${CMAKE_COMMAND}' ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
 +}"
 +      VERBATIM
 +      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
@@ -57,7 +57,7 @@ index 76a3078a..ecc7a0b7 100644
 +      execute_process(
 +        COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "& {
 +setvc (vcvars)
-+'${CMAKE_COMMAND}' ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
++& '${CMAKE_COMMAND}' ${build_type_flags} -G ${CMAKE_GENERATOR} -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} ${CMAKE_CURRENT_SOURCE_DIR}
 +}"
 +        COMMAND_ECHO STDOUT
 +        WORKING_DIRECTORY ${LLVM_${target_name}_BUILD})
