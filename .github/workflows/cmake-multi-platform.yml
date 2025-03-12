@@ -140,8 +140,8 @@ jobs:
       if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader' }}
       run: |
         setvc (vcvars)
-        $b = ${{ github.workspace }}/build
-        $dxc = $b/cpm-cache/((ls -ad $b/cpm-cache/)[0])/dxc
+        $b = "${{ github.workspace }}/build"
+        $dxc = "$b/cpm-cache/((ls -ad $b/cpm-cache/)[0])/dxc"
         cmake -S $dxc -B $b/NATIVE -C $dxc/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
         cmake --build $b/NATIVE --target llvm-tblgen --config Release
         cmake --build $b/NATIVE --target clang-tblgen --config Release
