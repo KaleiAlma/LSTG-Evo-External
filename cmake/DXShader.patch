@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..8f77c1ac 100644
+index 76a3078a..18e4853f 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -27,7 +27,7 @@ index 76a3078a..8f77c1ac 100644
 +  if(LSTGEXT_GH AND WIN32 AND NOT MINGW)
 +    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
 +      COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "& {
-+$env:Path = 'C:/Windows/;C:/Windows/System32/';
++$env:Path = 'C:/Windows/;C:/Windows/System32/;C:/ProgramData/chocolatey/bin';
 +$env:LIB = '';
 +echo $env:Platform;
 +setvc (vcvars);
@@ -60,7 +60,7 @@ index 76a3078a..8f77c1ac 100644
 +    if(LSTGEXT_GH AND WIN32 AND NOT MINGW)
 +      execute_process(
 +        COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "& {
-+$env:Path = 'C:/Windows/\;C:/Windows/System32/'
++$env:Path = 'C:/Windows/\;C:/Windows/System32/\;C:/ProgramData/chocolatey/bin'
 +$env:LIB = ''
 +echo $env:Platform
 +setvc (vcvars)
