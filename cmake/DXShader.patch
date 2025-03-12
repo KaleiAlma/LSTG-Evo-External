@@ -1,5 +1,5 @@
 diff --git a/cmake/modules/CrossCompile.cmake b/cmake/modules/CrossCompile.cmake
-index 76a3078a..72dbd894 100644
+index 76a3078a..aae11142 100644
 --- a/cmake/modules/CrossCompile.cmake
 +++ b/cmake/modules/CrossCompile.cmake
 @@ -1,4 +1,4 @@
@@ -24,7 +24,7 @@ index 76a3078a..72dbd894 100644
  
 +  set(LSTGEXT_GH $ENV{GITHUB_ACTIONS})
 +  if(LSTGEXT_GH AND WIN32 AND NOT MINGW)
-+    set(LSTGEXT_PWSH_COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "setvc (vcvars) && '${CMAKE_COMMAND}' ${build_type_flags} -G '${CMAKE_GENERATOR}' -DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD} -DLLVM_REQUIRES_EH=ON ${CROSS_TOOLCHAIN_FLAGS_${target_name}} '${CMAKE_CURRENT_SOURCE_DIR}'")
++    set(LSTGEXT_PWSH_COMMAND "C:/Program Files/PowerShell/7/pwsh.EXE" -c "setvc (vcvars) && '${CMAKE_COMMAND}' '${build_type_flags}' -G '${CMAKE_GENERATOR}' '-DLLVM_TARGETS_TO_BUILD=${LLVM_TARGETS_TO_BUILD}' '-DLLVM_REQUIRES_EH=ON' ${CROSS_TOOLCHAIN_FLAGS_${target_name}} '${CMAKE_CURRENT_SOURCE_DIR}'")
 +    add_custom_command(OUTPUT ${LLVM_${target_name}_BUILD}/CMakeCache.txt
 +      COMMAND ${LSTGEXT_PWSH_COMMAND}
 +      WORKING_DIRECTORY ${LLVM_${target_name}_BUILD}
