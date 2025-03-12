@@ -141,7 +141,8 @@ jobs:
       run: |
         setvc (vcvars)
         $b = "${{ github.workspace }}/build"
-        $dxc = "$b/cpm-cache/$((ls -ad $b/cpm-cache/)[0])/dxc"
+        $dxc = "$b/__deps/dxc-src"
+        git clone --depth=1 --recurse-submodules --shallow-submodules -b v1.8.2502 https://github.com/microsoft/DirectXShaderCompiler $dxc
         cmake -S $dxc -B $b/NATIVE -C $dxc/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
         cmake --build $b/NATIVE --target llvm-tblgen --config Release
         cmake --build $b/NATIVE --target clang-tblgen --config Release
