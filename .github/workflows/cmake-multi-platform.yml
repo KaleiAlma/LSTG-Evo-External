@@ -86,8 +86,6 @@ jobs:
       run: |
         choco install ninja
         Install-Module -Name VCVars -Confirm:$false -Force
-        (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
-        | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
         git config --system core.longpaths true
     - name: Upgrade Windows LLVM
       if: ${{ runner.os == 'Windows' && !(inputs.build == 'zip' || inputs.build == 'shader') }}
@@ -138,6 +136,23 @@ jobs:
         mv ${{ github.workspace }}/build/SDL3-shared/lstgext/* ${{ github.workspace }}/build/SDL3-shared/
         mv ${{ github.workspace }}/build/SDL3-static/lstgext/* ${{ github.workspace }}/build/SDL3-static/
 
+    - name: Build DXC native
+      if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader' }}
+      run: |
+        setvc (vcvars)
+        cd ${{ github.workspace }}/build/
+        git clone --depth=1 -b v1.8.2502 https://github.com/microsoft/DirectXShaderCompiler dxc-src
+        mkdir NATIVE
+        cmake -S dxc-src -B NATIVE -C dxc-src/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake --build NATIVE --target llvm-tblgen --config Release
+        cmake --build NATIVE --target clang-tblgen --config Release
+        "TBLGEN_DIR=${{ github.workspace }}/build/NATIVE/bin/" >> "$env:GITHUB_ENV"
+
+    - name: Set Windows VCVars
+      if: ${{ runner.os == 'Windows' }}
+      run: |
+        (vcvars ${{ matrix.target_arch.main_win }}).GetEnumerator()
+        | Foreach { "$($_.Key)=$($_.Value)" >> "$env:GITHUB_ENV" }
 
     - name: Configure CMake (Shared)
       run: >
@@ -152,6 +167,8 @@ jobs:
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-shared' || '' }}
+        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DLLVM_TABLEGEN={0}/llvm-tblgen.exe', env.TBLGEN_DIR) || '' }}
+        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DCLANG_TABLEGEN={0}/clang-tblgen.exe', env.TBLGEN_DIR) || '' }}
         -G Ninja
 
     - name: Build With CMake (Shared)
@@ -189,6 +206,8 @@ jobs:
         -S ${{ github.workspace }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-static' || '' }}
+        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DLLVM_TABLEGEN={0}/llvm-tblgen.exe', env.TBLGEN_DIR) || '' }}
+        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DCLANG_TABLEGEN={0}/clang-tblgen.exe', env.TBLGEN_DIR) || '' }}
         -G Ninja
 
     - name: Build With CMake (Static)
