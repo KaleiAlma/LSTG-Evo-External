@@ -91,7 +91,7 @@ jobs:
         git config --system core.longpaths true
     - name: Upgrade Windows LLVM
       if: ${{ runner.os == 'Windows' && !(inputs.build == 'zip' || inputs.build == 'shader') }}
-      run: choco upgrade llvm
+      run: choco install llvm --version=19.1.7
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: brew install ninja llvm@19 lld
