@@ -10,6 +10,7 @@ CPMAddPackage(
         "ZLIBNG_ENABLE_TESTS OFF"
         "WITH_GTEST OFF"
         "MZ_FETCH_LIBS ON"
+        "MZ_FORCE_FETCH_LIBS ON"
         "ZLIB_REPOSITORY https://github.com/zlib-ng/zlib-ng"
         "ZLIB_TAG 2.2.4"
         "ZSTD_TAG v1.5.7"
