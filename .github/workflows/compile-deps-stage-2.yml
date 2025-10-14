@@ -42,9 +42,9 @@ jobs:
           cd ${{ github.workspace }}/lstgext/
           for a in */; do
             b=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
-            mkdir -p $b/lstgext
-            mv -f $a/lstgext/* $b/lstgext/
-            rm -r $a
+            mkdir -p $b/
+            cp -rn $a/* $b/
+            rm -rf $a
           done
           for a in */; do
             zip -r "${a%/}.zip" "$a" &
