@@ -73,11 +73,11 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         # sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-        echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main"     | sudo tee -a /etc/apt/sources.list > /dev/null
-        echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-19 main" | sudo tee -a /etc/apt/sources.list > /dev/null
+        echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main"     | sudo tee -a /etc/apt/sources.list > /dev/null
+        echo "deb-src http://apt.llvm.org/jammy/ llvm-toolchain-jammy-20 main" | sudo tee -a /etc/apt/sources.list > /dev/null
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo apt update
-        sudo apt install cmake llvm-19 clang-19 lld-19 clang-tools-19 \
+        sudo apt install cmake llvm-20 clang-20 lld-20 clang-tools-20 \
           ninja-build mesa-utils mesa-common-dev libxext-dev libasound2-dev \
           libpipewire-0.3-dev libaudio-dev libjack-dev libsndio-dev \
           libasound2-dev libpulse-dev libpulse-mainloop-glib0 libglib2.0-dev libxkbcommon-dev
@@ -88,11 +88,11 @@ jobs:
         Install-Module -Name VCVars -Confirm:$false -Force
         git config --system core.longpaths true
     - name: Upgrade Windows LLVM
-      if: ${{ runner.os == 'Windows' && !(inputs.build == 'zip' || inputs.build == 'shader') }}
-      run: choco install llvm --version=19.1.7
+      if: ${{ runner.os == 'Windows' && inputs.build != 'zip' }}
+      run: choco install llvm --version=20.1.8
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
-      run: brew install ninja llvm@19 lld
+      run: brew install ninja llvm@20 lld
 
     - name: Checkout Repo
       uses: actions/checkout@v4
@@ -136,17 +136,17 @@ jobs:
         mv ${{ github.workspace }}/build/SDL3-shared/lstgext/* ${{ github.workspace }}/build/SDL3-shared/
         mv ${{ github.workspace }}/build/SDL3-static/lstgext/* ${{ github.workspace }}/build/SDL3-static/
 
-    - name: Build DXC native
-      if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader' }}
-      run: |
-        setvc (vcvars)
-        $b = "${{ github.workspace }}/build"
-        $dxc = "$b/__deps/dxc-src"
-        git clone --depth=1 --recurse-submodules --shallow-submodules -b v1.8.2502 https://github.com/microsoft/DirectXShaderCompiler $dxc
-        cmake -S $dxc -B $b/NATIVE -C $dxc/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
-        cmake --build $b/NATIVE --target llvm-tblgen --config Release
-        cmake --build $b/NATIVE --target clang-tblgen --config Release
-        "TBLGEN_DIR=$b/NATIVE/bin/" >> "$env:GITHUB_ENV"
+    # - name: Build DXC native
+    #   if: ${{ runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader' }}
+    #   run: |
+    #     setvc (vcvars)
+    #     $b = "${{ github.workspace }}/build"
+    #     $dxc = "$b/__deps/dxc-src"
+    #     git clone --depth=1 --recurse-submodules --shallow-submodules -b v1.8.2502 https://github.com/microsoft/DirectXShaderCompiler $dxc
+    #     cmake -S $dxc -B $b/NATIVE -C $dxc/cmake/caches/PredefinedParams.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
+    #     cmake --build $b/NATIVE --target llvm-tblgen --config Release
+    #     cmake --build $b/NATIVE --target clang-tblgen --config Release
+    #     "TBLGEN_DIR=$b/NATIVE/bin/" >> "$env:GITHUB_ENV"
 
     - name: Set Windows VCVars
       if: ${{ runner.os == 'Windows' }}
@@ -166,8 +166,6 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-shared' || '' }}
-        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DLLVM_TABLEGEN={0}/llvm-tblgen.exe', env.TBLGEN_DIR) || '' }}
-        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DCLANG_TABLEGEN={0}/clang-tblgen.exe', env.TBLGEN_DIR) || '' }}
         -G Ninja
 
     - name: Build With CMake (Shared)
@@ -204,8 +202,6 @@ jobs:
         -DLSTGEXT_BUILD=${{ inputs.build }}
         -DCPM_SOURCE_CACHE=${{ github.workspace }}/build/cpm-cache
         ${{ inputs.sdl3 && '-DLSTGEXT_SDL3_DIR=SDL3-static' || '' }}
-        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DLLVM_TABLEGEN={0}/llvm-tblgen.exe', env.TBLGEN_DIR) || '' }}
-        ${{ (runner.os == 'Windows' && matrix.target_arch.main == 'arm64' && inputs.build == 'shader') && format('-DCLANG_TABLEGEN={0}/clang-tblgen.exe', env.TBLGEN_DIR) || '' }}
         -G Ninja
 
     - name: Build With CMake (Static)

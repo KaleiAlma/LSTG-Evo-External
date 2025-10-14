@@ -11,19 +11,19 @@ jobs:
       sdl3: true
       sdl3-run-id: ${{ fromJson(vars.SDL3_RUN_ID) }}
     secrets: inherit
-  build-shader:
-    uses: ./.github/workflows/cmake-multi-platform.yml
-    with:
-      build: shader
-      sdl3: true
-      sdl3-run-id: ${{ fromJson(vars.SDL3_RUN_ID) }}
-    secrets: inherit
+  # build-shader:
+  #   uses: ./.github/workflows/cmake-multi-platform.yml
+  #   with:
+  #     build: shader
+  #     sdl3: true
+  #     sdl3-run-id: ${{ fromJson(vars.SDL3_RUN_ID) }}
+  #   secrets: inherit
 
   bundle-archives:
     runs-on: ubuntu-latest
     needs:
       - build-main
-      - build-shader
+      # - build-shader
     steps:
       - name: Download all Stage 1 workflow run artifacts
         uses: actions/download-artifact@v4

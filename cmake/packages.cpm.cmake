@@ -3,12 +3,13 @@
 
 CPMAddPackage(
     NAME nlohmann_json
-    VERSION 3.11.2
+    VERSION 3.12.0
     GITHUB_REPOSITORY nlohmann/json
     OPTIONS
     "JSON_BuildTests OFF"
     "JSON_Install ON"
 )
+list(APPEND LSTG_EXTERNAL_INCDIRS ${nlohmann_json_SOURCE_DIR}/include/nlohmann)
 
 
 # gabime spdlog
@@ -53,9 +54,9 @@ CPMAddPackage(
 
 list(APPEND LSTG_EXTERNAL_SOURCES
     ${nothings_stb_SOURCE_DIR}/stb_vorbis.c
-    ${nothings_stb_SOURCE_DIR}/stb_image.h
-    ${nothings_stb_SOURCE_DIR}/stb_image_write.h
-    ${nothings_stb_SOURCE_DIR}/stb_rect_pack.h
+    # ${nothings_stb_SOURCE_DIR}/stb_image.h
+    # ${nothings_stb_SOURCE_DIR}/stb_image_write.h
+    # ${nothings_stb_SOURCE_DIR}/stb_rect_pack.h
  )
 list(APPEND LSTG_STB_HEADERS
     ${nothings_stb_SOURCE_DIR}/stb_image.h
@@ -63,11 +64,11 @@ list(APPEND LSTG_STB_HEADERS
     ${nothings_stb_SOURCE_DIR}/stb_rect_pack.h
 )
 list(APPEND LSTG_STB_BASEDIRS ${nothings_stb_SOURCE_DIR})
-list(APPEND LSTG_EXTERNAL_DEFINES
-    STB_IMAGE_IMPLEMENTATION
-    STB_IMAGE_WRITE_IMPLEMENTATION
-    STB_RECT_PACK_IMPLEMENTATION
-)
+# list(APPEND LSTG_EXTERNAL_DEFINES
+#     STB_IMAGE_IMPLEMENTATION
+#     STB_IMAGE_WRITE_IMPLEMENTATION
+#     STB_RECT_PACK_IMPLEMENTATION
+# )
 
 
 # pcg random

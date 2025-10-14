@@ -143,16 +143,16 @@ if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SDL3)
     list(APPEND ExternalLibs SDL3::SDL3)
 endif()
 
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
-    include(cmake/packages.shader.cmake)
-    list(APPEND ExternalLibs
-        SDL3_shadercross::SDL3_shadercross
-        glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
-    )
-    if(LSTGEXT_BUILD_STATIC_LIBS)
-        list(APPEND ExternalLibs spirv-cross-util)
-    endif()
-endif()
+# if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
+#     include(cmake/packages.shader.cmake)
+#     list(APPEND ExternalLibs
+#         SDL3_shadercross::SDL3_shadercross
+#         glslang SPIRV OSDependent MachineIndependent GenericCodeGen glslang-default-resource-limits
+#     )
+#     if(LSTGEXT_BUILD_STATIC_LIBS)
+#         list(APPEND ExternalLibs spirv-cross-util)
+#     endif()
+# endif()
 
 
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
@@ -178,14 +178,17 @@ list(APPEND ExternalLibs
 #=================================================#
 
 list(APPEND LSTG_EXTERNAL_DEFINES
-    IMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/imgui/lstg_imconfig.h"
+    IMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/imgui/config/imconfig.h"
 )
 
 list(APPEND LSTG_IMGUI_BASEDIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/config
 )
 
 list(APPEND LSTG_EXTERNAL_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/config/imconfig.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_rect_pack.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imstb_textedit.h
@@ -208,15 +211,19 @@ list(APPEND LSTG_EXTERNAL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdl3.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdlgpu3.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdlgpu3.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_opengl3.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_opengl3.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdlgpu3_shaders.h
 )
 
 list(APPEND LSTG_IMGUI_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/config/imconfig.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/imgui.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/misc/freetype/imgui_freetype.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/misc/cpp/imgui_stdlib.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdl3.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_sdlgpu3.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui/backends/imgui_impl_opengl3.h
 )
 
 
@@ -230,11 +237,16 @@ list(APPEND LSTG_IMGUI_BASEDIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot
 )
 
-list(APPEND LSTG_IMGUI_HEADERS
+list(APPEND LSTG_EXTERNAL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot_demo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot_items.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot.h
+)
+
+list(APPEND LSTG_IMGUI_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/implot/implot.h
 )
 
@@ -283,10 +295,10 @@ list(APPEND LSTG_IMGUI_HEADERS
 #=================================================#
 
 
-list(APPEND LSTG_EXTERNAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/miniaudio/miniaudio.h)
+# list(APPEND LSTG_EXTERNAL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/miniaudio/miniaudio.h)
 list(APPEND LSTG_EXTERNAL_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/miniaudio/miniaudio.h)
 list(APPEND LSTG_EXTERNAL_INCDIRS ${CMAKE_CURRENT_SOURCE_DIR}/miniaudio)
-list(APPEND LSTG_EXTERNAL_DEFINES MA_IMPLEMENTATION MA_USE_STDINT)
+# list(APPEND LSTG_EXTERNAL_DEFINES MA_IMPLEMENTATION MA_USE_STDINT)
 
 
 #================================================#
@@ -305,12 +317,12 @@ list(APPEND ExternalLibs
 # ==================== xmath ====================
 
 list(APPEND LSTG_EXTERNAL_INCDIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/xmath/xmath
-    ${CMAKE_CURRENT_SOURCE_DIR}/xmath/xmath-patch
+    ${CMAKE_CURRENT_SOURCE_DIR}/xmath
+    ${CMAKE_CURRENT_SOURCE_DIR}/xmath-patch
 )
 list(APPEND LSTG_EXTERNAL_SOURCES
-    xmath/xmath-patch/math/Vec2.h
-    xmath/xmath-patch/math/Vec2.cpp
+    xmath-patch/math/Vec2.h
+    xmath-patch/math/Vec2.cpp
     xmath/xmath/meow_fft.c
     xmath/xmath/meow_fft.h
     xmath/xmath/XCollision.cpp
@@ -332,6 +344,21 @@ list(APPEND LSTG_EXTERNAL_SOURCES
     xmath/xmath/XSpline.cpp
     xmath/xmath/XSpline.h
     xmath/xmath/XTween.cpp
+    xmath/xmath/XTween.h
+)
+list(APPEND LSTG_EXTERNAL_HEADERS
+    xmath-patch/math/Vec2.h
+    xmath/xmath/meow_fft.h
+    xmath/xmath/XCollision.h
+    xmath/xmath/XComplex.h
+    xmath/xmath/XConstant.h
+    xmath/xmath/XDistance.h
+    xmath/xmath/XEquation.h
+    xmath/xmath/XFFT.h
+    xmath/xmath/XIntersect.h
+    xmath/xmath/XMath.h
+    xmath/xmath/XRandom.h
+    xmath/xmath/XSpline.h
     xmath/xmath/XTween.h
 )
 
@@ -356,7 +383,7 @@ endif()
 #===========================================================#
 
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
-    add_library(lstgext STATIC ${LSTG_EXTERNAL_SOURCES})
+    add_library(lstgext STATIC ${LSTG_EXTERNAL_SOURCES} headerlibs.cpp)
     lstgext_tgtopts_full(lstgext)
     target_compile_definitions(lstgext PUBLIC ${LSTG_EXTERNAL_DEFINES})
 
@@ -397,9 +424,9 @@ endif()
 
 set(ExternalBuild ${ExternalLibs})
 
-if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
-    list(APPEND ExternalBuild shadercross glslang-standalone)
-endif()
+# if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_SHADER)
+#     list(APPEND ExternalBuild shadercross glslang-standalone)
+# endif()
 
 if(LSTGEXT_BUILD_ALL OR LSTGEXT_BUILD_MAIN)
     list(APPEND ExternalBuild lstgext)

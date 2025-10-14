@@ -15,12 +15,12 @@ jobs:
     with:
       build: main
       sdl3: true
-  build-shader:
-    uses: ./.github/workflows/cmake-multi-platform.yml
-    needs: build-sdl3
-    with:
-      build: shader
-      sdl3: true
+  # build-shader:
+  #   uses: ./.github/workflows/cmake-multi-platform.yml
+  #   needs: build-sdl3
+  #   with:
+  #     build: shader
+  #     sdl3: true
   build-zip:
     uses: ./.github/workflows/cmake-multi-platform.yml
     with:
@@ -43,7 +43,7 @@ jobs:
     needs:
       - build-sdl3
       - build-main
-      - build-shader
+      # - build-shader
       - build-zip
     steps:
       - name: Download all workflow run artifacts
