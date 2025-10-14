@@ -9,7 +9,7 @@ endif()
 set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "")
 
 execute_process(
-    COMMAND brew --prefix llvm@19
+    COMMAND brew --prefix llvm@20
     OUTPUT_VARIABLE LLVM_DIR
 )
 
