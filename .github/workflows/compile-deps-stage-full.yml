@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: octokit/request-action@v2.x
         with:
-          route: PATCH /repos/${{ github.action_repository }}/actions/variables/SDL3_RUN_ID
+          route: PATCH /repos/${{ github.repository }}/actions/variables/SDL3_RUN_ID
           name: SDL3_RUN_ID
           value: ${{ github.run_id }}
         env:
@@ -56,7 +56,7 @@ jobs:
           cd ${{ github.workspace }}/lstgext/
           for a in */; do
             b=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
-            mkdir $b
+            mkdir -p $b
             mv $a/* $b
             rm -r $a
           done
