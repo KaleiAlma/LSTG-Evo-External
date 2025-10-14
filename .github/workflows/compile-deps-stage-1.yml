@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: octokit/request-action@v2.4.0
         with:
-          route: POST /repos/${{ github.action_repository }}/actions/variables/
+          route: PATCH /repos/${{ github.action_repository }}/actions/variables/SDL3_RUN_ID
           name: SDL3_RUN_ID
           value: ${{ github.run_id }}
         env:
