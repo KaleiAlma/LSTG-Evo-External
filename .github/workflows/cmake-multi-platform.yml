@@ -93,7 +93,7 @@ jobs:
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja llvm@20 lld@20
+        brew install ninja llvm@20 lld
         export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
     - name: Checkout Repo
