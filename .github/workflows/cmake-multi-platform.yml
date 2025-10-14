@@ -84,12 +84,11 @@ jobs:
     - name: Configure Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        choco install ninja
         Install-Module -Name VCVars -Confirm:$false -Force
         git config --system core.longpaths true
-    - name: Upgrade Windows LLVM
-      if: ${{ runner.os == 'Windows' && inputs.build != 'zip' }}
-      run: choco install llvm --version=20.1.8
+    # - name: Upgrade Windows LLVM
+    #   if: ${{ runner.os == 'Windows' && inputs.build != 'zip' }}
+    #   run: choco install llvm --version=20.1.8
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: |
