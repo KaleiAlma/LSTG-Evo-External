@@ -92,7 +92,9 @@ jobs:
       run: choco install llvm --version=20.1.8
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
-      run: brew install ninja llvm@20 lld
+      run: |
+        brew install ninja llvm@20 lld@20
+        export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
 
     - name: Checkout Repo
       uses: actions/checkout@v4
