@@ -93,8 +93,8 @@ jobs:
     - name: Configure macOS
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja llvm@20 lld
-        export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+        brew install llvm@20 lld
+        echo SDKROOT=$(xcrun --sdk macosx --show-sdk-path) >> $GITHUB_ENV
 
     - name: Checkout Repo
       uses: actions/checkout@v4
