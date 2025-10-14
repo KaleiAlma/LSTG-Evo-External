@@ -57,7 +57,7 @@ jobs:
           for a in */; do
             b=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
             mkdir -p $b/lstgext
-            mv -f $a/* $b/
+            mv -f $a/lstgext/* $b/lstgext/
             rm -r $a
           done
           for a in */; do
