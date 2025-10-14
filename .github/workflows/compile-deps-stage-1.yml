@@ -22,6 +22,6 @@ jobs:
         with:
           route: PATCH /repos/${{ github.repository }}/actions/variables/SDL3_RUN_ID
           name: SDL3_RUN_ID
-          value: "${{ github.run_id }}"
+          value: "\"${{ github.run_id }}\""
         env:
           GITHUB_TOKEN: ${{ secrets.SDL3_CACHER }}

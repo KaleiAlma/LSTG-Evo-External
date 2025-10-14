@@ -34,7 +34,7 @@ jobs:
         with:
           route: PATCH /repos/${{ github.repository }}/actions/variables/SDL3_RUN_ID
           name: SDL3_RUN_ID
-          value: "${{ github.run_id }}"
+          value: "\"${{ github.run_id }}\""
         env:
           GITHUB_TOKEN: ${{ secrets.SDL3_CACHER }}
 
@@ -57,7 +57,7 @@ jobs:
           for a in */; do
             b=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
             mkdir -p $b/lstgext
-            mv $a/lstgext/* $b/lstgext/
+            mv -f $a/* $b/
             rm -r $a
           done
           for a in */; do
