@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-sdl3
     steps:
-      - uses: octokit/request-action@v2.4.0
+      - uses: octokit/request-action@v2.x
         with:
           route: PATCH /repos/${{ github.action_repository }}/actions/variables/SDL3_RUN_ID
           name: SDL3_RUN_ID
@@ -56,9 +56,9 @@ jobs:
           cd ${{ github.workspace }}/lstgext/
           for a in */; do
             b=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
-            # mkdir $b
-            mv $a $b
-            # rm $a
+            mkdir $b
+            mv $a/* $b
+            rm -r $a
           done
           for a in */; do
             zip -r "${a%/}.zip" "$a" &
