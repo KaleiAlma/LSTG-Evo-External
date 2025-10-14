@@ -56,8 +56,8 @@ jobs:
           cd ${{ github.workspace }}/lstgext/
           for a in */; do
             b=$(echo "$a" | sed -nE 's/lstgext-(.*)-(.*)-(.*)-(.*)-(.*)$/lstgext-\1-\2-\3-\4/gp' -)
-            mkdir -p $b
-            mv $a/* $b
+            mkdir -p $b/lstgext
+            mv $a/lstgext/* $b/lstgext/
             rm -r $a
           done
           for a in */; do
