@@ -4,7 +4,7 @@
 CPMAddPackage(
     NAME minizip_ng
     GITHUB_REPOSITORY zlib-ng/minizip-ng
-    GIT_TAG 4.0.8
+    GIT_TAG 4.0.10
     OPTIONS
         "ZLIB_ENABLE_TESTS OFF"
         "ZLIBNG_ENABLE_TESTS OFF"
@@ -12,7 +12,7 @@ CPMAddPackage(
         "MZ_FETCH_LIBS ON"
         "MZ_FORCE_FETCH_LIBS ON"
         "ZLIB_REPOSITORY https://github.com/zlib-ng/zlib-ng"
-        "ZLIB_TAG 2.2.4"
+        "ZLIB_TAG 2.2.5"
         "ZSTD_TAG v1.5.7"
         "WITH_SSE2 ${LSTG_x86_64}"
         "WITH_SSSE3 ${LSTG_SSE4_2}"
