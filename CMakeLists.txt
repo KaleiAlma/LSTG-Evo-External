@@ -7,6 +7,11 @@ set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 # ==================== common ==================== #
 #==================================================#
 
+if(APPLE)
+    set(CMAKE_XCODE_GENERATE_TOP_LEVEL_PROJECT_ONLY TRUE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
+endif()
+
 set(DEFAULT_x86_64_REVISION "westmere" CACHE STRING "Clang x86_64 CPU revision")
 set(DEFAULT_x86_64_REVISION_WINDOWS "SSE4.2" CACHE STRING "MSVC x64 architecture flag")
 set(DEFAULT_ARM64_REVISION "armv8.2-a" CACHE STRING "Clang ARM64 CPU revision")
